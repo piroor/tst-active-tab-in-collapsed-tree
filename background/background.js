@@ -88,21 +88,19 @@ async function updateTab(tabId, lastActiveTab = null) {
         display: none;
       }
 
-      %CONTAINER% > .active-tab {
-/*
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-*/
+      %CONTAINER% {
         border: 1px solid;
         background: ButtonFace;
         bottom: 0;
         color: ButtonText;
         left: 0;
-        overflow: hidden;
         position: absolute;
         right: 0;
+      }
+
+      %CONTAINER% > .active-tab {
+        display: block;
+        overflow: hidden;
         text-overflow: ".."; /*ellipsis*/;
         white-space: pre;
       }
