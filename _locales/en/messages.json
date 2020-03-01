@@ -1,0 +1,4 @@
+{
+  "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
+  "extensionDescription": { "message": "Provides UI to show last active tab in a collapsed tree." }
+}
