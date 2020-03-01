@@ -67,16 +67,17 @@ browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
 }, { properties: ['title', 'favIconUrl'] });
 
 
-async function updateTab(tabId, tab = null) {
-  if (!tab)
-    tab = await browser.tabs.get(tabId);
+async function updateTab(tabId, lastActiveTab = null) {
+  const tab = await browser.tabs.get(tabId);
+  if (!lastActiveTab)
+    lastActiveTab = tab;
   if (!tab ||
       !tab.openerTabId)
     return;
 
-  const contents = buildContentsForTab(tab);
+  const contents = buildContentsForTab(lastActiveTab);
   contentsForTab.set(tab.openerTabId, contents);
-  lastActiveForTab.set(tab.openerTabId, tabId);
+  lastActiveForTab.set(tab.openerTabId, lastActiveTab.id);
 
   browser.runtime.sendMessage(TST_ID, {
     type:     'set-extra-tab-contents',
@@ -124,7 +125,7 @@ async function updateTab(tabId, tab = null) {
     `
   });
 
-  updateTab(tab.openerTabId);
+  updateTab(tab.openerTabId, lastActiveTab);
 }
 
 function buildContentsForTab(tab) {
