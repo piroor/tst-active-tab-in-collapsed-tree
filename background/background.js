@@ -89,17 +89,24 @@ async function updateTab(tabId, lastActiveTab = null) {
       }
 
       %CONTAINER% {
-        border: 1px solid;
+        border: 1px solid ThreeDShadow;
         background: ButtonFace;
         bottom: 0;
         color: ButtonText;
         left: 0;
+        line-height: 1;
         position: absolute;
         right: 0;
       }
 
       %CONTAINER% > .active-tab {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        padding: 0.2em;
+      }
+
+      %CONTAINER% > .active-tab > .title {
         overflow: hidden;
         text-overflow: ".."; /*ellipsis*/;
         white-space: pre;
@@ -112,6 +119,7 @@ async function updateTab(tabId, lastActiveTab = null) {
 
       %CONTAINER% img {
         height: 12px;
+        margin-right: 0.25em;
         max-height: 12px;
         max-width: 12px;
         width: 12px;
@@ -127,7 +135,7 @@ async function updateTab(tabId, lastActiveTab = null) {
 }
 
 function buildContentsForTab(tab) {
-  return `<span class="active-tab ${tab.active ? 'active' : ''}" title="${sanitzeForHTML(tab.title)}"><img src="${tab.favIconUrl}">${sanitzeForHTML(tab.title)}</span>`;
+  return `<span class="active-tab ${tab.active ? 'active' : ''}"><img src="${tab.favIconUrl}"><span class="title" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span></span>`;
 }
 
 function sanitzeForHTML(string) {
