@@ -172,7 +172,7 @@ function sanitzeForHTML(string) {
 }
 
 async function updateAllTabs(options = {}) {
-  const windows = await (options.windowId ? browser.windows.get(options.windowId, { populate: true }) : browser.windows.getAll({ populate: true }));
+  const windows = options.windowId ? [await browser.windows.get(options.windowId, { populate: true })] : (await browser.windows.getAll({ populate: true }));
   for (const window of windows) {
     const tabs = window.tabs.sort((a, b) => a.lastAccessed - b.lastAccessed);
     for (const tab of tabs) {
