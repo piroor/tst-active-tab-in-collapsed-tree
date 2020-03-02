@@ -92,8 +92,10 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           updateAllTabs({ windowId: message.windowId });
           break;
 
-        case 'try-expand-tree-from-focused-collapsed-tab':
         case 'try-expand-tree-from-focused-parent':
+          if (!lastActiveForTab.get(message.tab.id))
+            return;
+        case 'try-expand-tree-from-focused-collapsed-tab':
         case 'try-move-focus-from-collapsing-tree':
           return Promise.resolve(true);
 
