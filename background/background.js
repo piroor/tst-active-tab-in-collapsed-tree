@@ -52,7 +52,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   %CONTAINER% img[src="#"] {
     visibility: hidden;
   }
-`;
+`/*.replace(/%CONTAINER%/g, '.extra-items-container::part(container).tst-active-tab-in-collapsed-tree_piro_sakura_ne_jp')*/;
 
 const contentsForTab = new Map();
 const lastActiveForTab = new Map();
@@ -72,7 +72,8 @@ async function registerToTST() {
         'tab-mousedown',
         'tab-dblclicked',
         'tree-collapsed-state-changed'
-      ]
+      ],
+      //style: STYLE_FOR_EXTRA_TAB_CONTENTS
     });
     updateAllTabs();
   }
