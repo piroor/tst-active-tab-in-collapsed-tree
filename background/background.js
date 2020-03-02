@@ -125,14 +125,25 @@ browser.tabs.onRemoved.addListener(tabId => {
 });
 
 browser.tabs.onActivated.addListener(async activeInfo => {
-  updateTab(activeInfo.tabId);
-  updateTab(activeInfo.previousTabId);
+  reserveToUpdateTab(activeInfo.tabId);
+  reserveToUpdateTab(activeInfo.previousTabId);
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
-  updateTab(tabId, tab);
+  reserveToUpdateTab(tabId, tab);
 }, { properties: ['title', 'favIconUrl'] });
 
+
+function reserveToUpdateTab(tabId, lastActiveTab) {
+  const timer = reserveToUpdateTab.reserved.get(tabId);
+  if (timer)
+    clearTimeout(timer);
+  reserveToUpdateTab.reserved.set(tabId, setTimeout(() => {
+    reserveToUpdateTab.reserved.delete(tabId);
+    updateTab(tabId, lastActiveTab);
+  }, 150));
+}
+reserveToUpdateTab.reserved = new Map();
 
 async function updateTab(tabId, lastActiveTab = null) {
   const [nativeTab, tree] = await Promise.all([
@@ -176,7 +187,7 @@ async function updateAllTabs(options = {}) {
   for (const window of windows) {
     const tabs = window.tabs.sort((a, b) => a.lastAccessed - b.lastAccessed);
     for (const tab of tabs) {
-      updateTab(tab.id, tab);
+      reserveToUpdateTab(tab.id, tab);
     }
   }
 }
