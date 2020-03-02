@@ -63,7 +63,14 @@ async function registerToTST() {
       type: 'register-self',
       name: browser.i18n.getMessage('extensionName'),
       //icons: browser.runtime.getManifest().icons,
-      listeningTypes: ['sidebar-show', 'tab-mousedown', 'tab-dblclicked']
+      listeningTypes: [
+        'sidebar-show',
+        'try-expand-tree-from-focused-collapsed-tab',
+        'try-expand-tree-from-focused-parent',
+        'try-move-focus-from-collapsing-tree',
+        'tab-mousedown',
+        'tab-dblclicked'
+      ]
     });
     updateAllTabs();
   }
@@ -84,6 +91,11 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
         case 'sidebar-show':
           updateAllTabs({ windowId: message.windowId });
           break;
+
+        case 'try-expand-tree-from-focused-collapsed-tab':
+        case 'try-expand-tree-from-focused-parent':
+        case 'try-move-focus-from-collapsing-tree':
+          return Promise.resolve(true);
 
         case 'tab-mousedown':
           if (message.originalTarget) {
