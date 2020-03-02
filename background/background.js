@@ -68,20 +68,29 @@ browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
 
 
 async function updateTab(tabId, lastActiveTab = null) {
-  const tab = await browser.tabs.get(tabId);
+  const [nativeTab, tree] = await Promise.all([
+    browser.tabs.get(tabId),
+    browser.runtime.sendMessage(TST_ID, {
+      type: 'get-tree',
+      tab:  tabId
+    })
+  ]);
+  const tab = Object.assign(nativeTab, tree);
   if (!lastActiveTab)
     lastActiveTab = tab;
   if (!tab ||
-      !tab.openerTabId)
+      tab.ancestorTabIds.length == 0)
     return;
 
   const contents = buildContentsForTab(lastActiveTab);
-  contentsForTab.set(tab.openerTabId, contents);
-  lastActiveForTab.set(tab.openerTabId, lastActiveTab.id);
+
+  for (const ancestorId of tab.ancestorTabIds) {
+  contentsForTab.set(ancestorId, contents);
+  lastActiveForTab.set(ancestorId, lastActiveTab.id);
 
   browser.runtime.sendMessage(TST_ID, {
     type:     'set-extra-tab-contents',
-    id:       tab.openerTabId,
+    id:       ancestorId,
     contents,
     style:    `
       %CONTAINER%:not(.subtree-collapsed) {
@@ -130,8 +139,7 @@ async function updateTab(tabId, lastActiveTab = null) {
       }
     `
   });
-
-  updateTab(tab.openerTabId, lastActiveTab);
+  }
 }
 
 function buildContentsForTab(tab) {
