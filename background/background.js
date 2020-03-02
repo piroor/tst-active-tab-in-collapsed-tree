@@ -63,7 +63,7 @@ async function registerToTST() {
       type: 'register-self',
       name: browser.i18n.getMessage('extensionName'),
       //icons: browser.runtime.getManifest().icons,
-      listeningTypes: ['sidebar-show', 'tab-mousedown']
+      listeningTypes: ['sidebar-show', 'tab-mousedown', 'tab-dblclicked']
     });
     updateAllTabs();
   }
@@ -90,6 +90,26 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             const lastActive = lastActiveForTab.get(message.tab.id);
             if (lastActive) {
               browser.tabs.update(lastActive, { active: true });
+              return Promise.resolve(true); // cancel default event handling of TST
+            }
+          }
+          break;
+
+        case 'tab-dblclicked':
+          if (message.originalTarget) {
+            const lastActive = lastActiveForTab.get(message.tab.id);
+            if (lastActive) {
+              browser.runtime.sendMessage(TST_ID, {
+                type: 'get-tree',
+                tab:  lastActive
+              }).then(tab => {
+                for (const ancestorId of tab.ancestorTabIds) {
+                  browser.runtime.sendMessage(TST_ID, {
+                    type: 'expand-tree',
+                    tab:  ancestorId
+                  });
+                }
+              });
               return Promise.resolve(true); // cancel default event handling of TST
             }
           }
