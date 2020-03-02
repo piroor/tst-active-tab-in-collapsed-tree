@@ -105,6 +105,18 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
               return Promise.resolve(true); // cancel default event handling of TST
             }
           }
+          else if (!message.tab.states.includes('subtree-collapsed') &&
+                   !message.twisty &&
+                   !message.soundButton &&
+                   !message.closebox &&
+                   !message.altKey &&
+                   !message.ctrlKey &&
+                   !message.metaKey &&
+                   !message.shiftKey) {
+            // Clear last active descendant for a parent tab
+            // when it is clicked/focused while it is expanded.
+            reserveToUpdateTab(message.tab.id);
+          }
           break;
 
         case 'tab-dblclicked':
@@ -137,8 +149,15 @@ browser.tabs.onRemoved.addListener(tabId => {
 });
 
 browser.tabs.onActivated.addListener(async activeInfo => {
+  const previousTab = await browser.runtime.sendMessage(TST_ID, {
+    type: 'get-tree',
+    tab:  activeInfo.previousTabId
+  });
+  if (previousTab.states.includes('collapsed') ||
+      !previousTab.states.includes('subtree-collapsed'))
+    reserveToUpdateTab(activeInfo.previousTabId);
+
   reserveToUpdateTab(activeInfo.tabId);
-  reserveToUpdateTab(activeInfo.previousTabId);
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
@@ -157,7 +176,7 @@ function reserveToUpdateTab(tabId, lastActiveTab) {
 }
 reserveToUpdateTab.reserved = new Map();
 
-async function updateTab(tabId, lastActiveTab = null) {
+async function updateTab(tabId, lastActiveTab = null, { initializing = false } = {}) {
   const [nativeTab, tree] = await Promise.all([
     browser.tabs.get(tabId),
     browser.runtime.sendMessage(TST_ID, {
@@ -165,26 +184,46 @@ async function updateTab(tabId, lastActiveTab = null) {
       tab:  tabId
     })
   ]);
+  if (!nativeTab)
+    return;
+
   const tab = Object.assign(nativeTab, tree);
   if (!lastActiveTab)
     lastActiveTab = tab;
-  if (!tab ||
-      tab.ancestorTabIds.length == 0)
+
+  // Clear last active descendant when a parent tab
+  // itself gets focused while it is expanded.
+  if ((!tab.states.includes('collapsed') &&
+       !tab.states.includes('subtree-collapsed')) ||
+      initializing)
+    reserveToSetContents(tabId, null, null);
+
+  if (tab.ancestorTabIds.length == 0)
     return;
 
   const contents = buildContentsForTab(lastActiveTab);
-
   for (const ancestorId of tab.ancestorTabIds) {
-    contentsForTab.set(ancestorId, contents);
-    lastActiveForTab.set(ancestorId, lastActiveTab.id);
+    reserveToSetContents(ancestorId, lastActiveTab.id, contents);
+  }
+}
+
+function reserveToSetContents(tabId, lastActiveTabId, contents) {
+  const timer = reserveToSetContents.reserved.get(tabId);
+  if (timer)
+    clearTimeout(timer);
+  reserveToSetContents.reserved.set(tabId, setTimeout(() => {
+    reserveToSetContents.reserved.delete(tabId);
+    contentsForTab.set(tabId, contents);
+    lastActiveForTab.set(tabId, lastActiveTabId);
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-tab-contents',
-      id:    ancestorId,
+      id:    tabId,
       style: STYLE_FOR_EXTRA_TAB_CONTENTS,
       contents
     });
-  }
+  }, 150));
 }
+reserveToSetContents.reserved = new Map();
 
 function buildContentsForTab(tab) {
   return `<span class="active-tab ${tab.active ? 'active' : ''}"><img src="${tab.favIconUrl}"><span class="title" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span></span>`;
@@ -199,7 +238,7 @@ async function updateAllTabs(options = {}) {
   for (const window of windows) {
     const tabs = window.tabs.sort((a, b) => a.lastAccessed - b.lastAccessed);
     for (const tab of tabs) {
-      reserveToUpdateTab(tab.id, tab);
+      updateTab(tab.id, tab, { initializing: true });
     }
   }
 }
