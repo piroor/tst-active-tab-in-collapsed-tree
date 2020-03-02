@@ -7,6 +7,53 @@
 
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
+const STYLE_FOR_EXTRA_TAB_CONTENTS = `
+  %CONTAINER%:not(.subtree-collapsed) {
+    display: none;
+  }
+
+  %CONTAINER% {
+    border: 1px solid ThreeDShadow;
+    background: ButtonFace;
+    bottom: 0;
+    color: ButtonText;
+    left: 0;
+    line-height: 1;
+    position: absolute;
+    right: 0;
+  }
+
+  %CONTAINER% > .active-tab {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    padding: 0.2em;
+  }
+
+  %CONTAINER% > .active-tab > .title {
+    overflow: hidden;
+    text-overflow: ".."; /*ellipsis*/;
+    white-space: pre;
+  }
+
+  %CONTAINER% > .active-tab.active {
+    background: ActiveCaption;
+    color: CaptionText;
+  }
+
+  %CONTAINER% img {
+    height: 12px;
+    margin-right: 0.25em;
+    max-height: 12px;
+    max-width: 12px;
+    width: 12px;
+  }
+
+  %CONTAINER% img[src="#"] {
+    visibility: hidden;
+  }
+`;
+
 const contentsForTab = new Map();
 const lastActiveForTab = new Map();
 
@@ -85,60 +132,14 @@ async function updateTab(tabId, lastActiveTab = null) {
   const contents = buildContentsForTab(lastActiveTab);
 
   for (const ancestorId of tab.ancestorTabIds) {
-  contentsForTab.set(ancestorId, contents);
-  lastActiveForTab.set(ancestorId, lastActiveTab.id);
-
-  browser.runtime.sendMessage(TST_ID, {
-    type:     'set-extra-tab-contents',
-    id:       ancestorId,
-    contents,
-    style:    `
-      %CONTAINER%:not(.subtree-collapsed) {
-        display: none;
-      }
-
-      %CONTAINER% {
-        border: 1px solid ThreeDShadow;
-        background: ButtonFace;
-        bottom: 0;
-        color: ButtonText;
-        left: 0;
-        line-height: 1;
-        position: absolute;
-        right: 0;
-      }
-
-      %CONTAINER% > .active-tab {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        padding: 0.2em;
-      }
-
-      %CONTAINER% > .active-tab > .title {
-        overflow: hidden;
-        text-overflow: ".."; /*ellipsis*/;
-        white-space: pre;
-      }
-
-      %CONTAINER% > .active-tab.active {
-        background: ActiveCaption;
-        color: CaptionText;
-      }
-
-      %CONTAINER% img {
-        height: 12px;
-        margin-right: 0.25em;
-        max-height: 12px;
-        max-width: 12px;
-        width: 12px;
-      }
-
-      %CONTAINER% img[src="#"] {
-        visibility: hidden;
-      }
-    `
-  });
+    contentsForTab.set(ancestorId, contents);
+    lastActiveForTab.set(ancestorId, lastActiveTab.id);
+    browser.runtime.sendMessage(TST_ID, {
+      type:  'set-extra-tab-contents',
+      id:    ancestorId,
+      style: STYLE_FOR_EXTRA_TAB_CONTENTS,
+      contents
+    });
   }
 }
 
