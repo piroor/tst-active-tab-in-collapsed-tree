@@ -56,6 +56,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
 
 const contentsForTab = new Map();
 const lastActiveForTab = new Map();
+let lastExpandingTree;
 
 async function registerToTST() {
   try {
@@ -69,7 +70,8 @@ async function registerToTST() {
         'try-expand-tree-from-focused-parent',
         'try-move-focus-from-collapsing-tree',
         'tab-mousedown',
-        'tab-dblclicked'
+        'tab-dblclicked',
+        'tree-collapsed-state-changed'
       ]
     });
     updateAllTabs();
@@ -79,6 +81,8 @@ async function registerToTST() {
   }
 }
 registerToTST();
+
+let lastExpandingTreeClearTimer;
 
 browser.runtime.onMessageExternal.addListener((message, sender) => {
   switch (sender.id) {
@@ -93,8 +97,11 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           break;
 
         case 'try-expand-tree-from-focused-parent':
-          if (!lastActiveForTab.get(message.tab.id))
-            return;
+          //if (!lastActiveForTab.get(message.tab.id))
+          //  return;
+          lastExpandingTree = message.tab.id;
+          return;
+
         case 'try-expand-tree-from-focused-collapsed-tab':
         case 'try-move-focus-from-collapsing-tree':
           return Promise.resolve(true);
@@ -140,6 +147,14 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             }
           }
           break;
+
+        case 'tree-collapsed-state-changed':
+          if (lastExpandingTreeClearTimer)
+            clearTimeout(lastExpandingTreeClearTimer);
+          lastExpandingTreeClearTimer = setTimeout(() => {
+            lastExpandingTreeClearTimer = null;
+            lastExpandingTree = null;
+          }, 250);
       }
       break;
   }
@@ -194,10 +209,11 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false } =
     lastActiveTab = tab;
 
   // Clear last active descendant when a parent tab
-  // itself gets focused while it is expanded.
-  if ((!tab.states.includes('collapsed') &&
-       !tab.states.includes('subtree-collapsed')) ||
-      initializing)
+  // itself gets focused while it is completely expanded.
+  if (initializing ||
+      (tabId != lastExpandingTree &&
+       (!tab.states.includes('collapsed') &&
+        !tab.states.includes('subtree-collapsed'))))
     reserveToSetContents(tabId, null, null);
 
   if (tab.ancestorTabIds.length == 0)
@@ -217,6 +233,12 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
     reserveToSetContents.reserved.delete(tabId);
     contentsForTab.set(tabId, contents);
     lastActiveForTab.set(tabId, lastActiveTabId);
+
+    if (lastActiveTabId)
+      browser.sessions.setTabValue(tabId, 'lastActiveTabId', lastActiveTabId);
+    else
+      browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
+
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-tab-contents',
       id:    tabId,
@@ -239,8 +261,24 @@ async function updateAllTabs(options = {}) {
   const windows = options.windowId ? [await browser.windows.get(options.windowId, { populate: true })] : (await browser.windows.getAll({ populate: true }));
   for (const window of windows) {
     const tabs = window.tabs.sort((a, b) => a.lastAccessed - b.lastAccessed);
-    for (const tab of tabs) {
-      updateTab(tab.id, tab, { initializing: true });
-    }
+    const tabsById = {};
+    const lastActiveTabIds = await Promise.all(tabs.map(tab => {
+      tabsById[tab.id] = tab;
+      return browser.sessions.getTabValue(tab.id, 'lastActiveTabId');
+    }));
+    tabs.forEach((tab, index) => {
+      const lastActiveTabId = lastActiveTabIds[index];
+      if (lastActiveTabId) {
+        const lastActiveTab = tabsById[lastActiveTabId];
+        reserveToSetContents(
+          tab.id,
+          lastActiveTabId,
+          lastActiveTab && buildContentsForTab(lastActiveTab)
+        );
+      }
+      else {
+        updateTab(tab.id, tab, { initializing: true });
+      }
+    });
   }
 }
