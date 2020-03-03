@@ -215,6 +215,13 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
         }; break;
       }
       break;
+
+    default:
+      switch (message.type) {
+        case 'will-cancel-expansion-from-focused-collapsed-tab':
+          return Promise.resolve(true);
+      }
+      break;
   }
 });
 
