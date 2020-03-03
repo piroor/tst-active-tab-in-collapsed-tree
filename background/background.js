@@ -108,6 +108,15 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           return Promise.resolve(true);
 
         case 'tab-mousedown':
+          if (message.button != 0 ||
+              message.twisty ||
+              message.soundButton ||
+              message.closebox ||
+              message.altKey ||
+              message.ctrlKey ||
+              message.metaKey ||
+              message.shiftKey)
+            return;
           if (message.originalTarget) {
             const lastActive = lastActiveForTab.get(message.tab.id);
             if (lastActive) {
@@ -115,14 +124,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
               return Promise.resolve(true); // cancel default event handling of TST
             }
           }
-          else if (!message.tab.states.includes('subtree-collapsed') &&
-                   !message.twisty &&
-                   !message.soundButton &&
-                   !message.closebox &&
-                   !message.altKey &&
-                   !message.ctrlKey &&
-                   !message.metaKey &&
-                   !message.shiftKey) {
+          else if (!message.tab.states.includes('subtree-collapsed')) {
             // Clear last active descendant for a parent tab
             // when it is clicked/focused while it is expanded.
             reserveToUpdateTab(message.tab.id);
