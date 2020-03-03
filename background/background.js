@@ -56,6 +56,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
 
 const contentsForTab = new Map();
 const lastActiveForTab = new Map();
+const parentForTab = new Map();
 let lastExpandingTree;
 
 async function registerToTST() {
@@ -184,34 +185,48 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             reserveToUpdateTab(message.oldParent.id);
           break;
 
-        case 'tree-collapsed-state-changed':
+        case 'tree-collapsed-state-changed': {
+          const lastActiveId = lastActiveForTab.get(message.tab.id);
+          if (lastActiveId)
+            browser.runtime.sendMessage(TST_ID, {
+              type: 'get-tree',
+              tab:  lastActiveId
+            }).then(tryUpdateSuccessorTabFor);
           if (lastExpandingTreeClearTimer)
             clearTimeout(lastExpandingTreeClearTimer);
           lastExpandingTreeClearTimer = setTimeout(() => {
             lastExpandingTreeClearTimer = null;
             lastExpandingTree = null;
           }, 250);
-          break;
+        }; break;
       }
       break;
   }
 });
 
 browser.tabs.onRemoved.addListener(tabId => {
+  const parentId = parentForTab.get(tabId);
+  if (parentId) {
+    const lastActiveId = lastActiveForTab.get(parentId);
+    if (lastActiveId && lastActiveId == tabId)
+      reserveToUpdateTab(parentId);
+  }
   contentsForTab.delete(tabId);
   lastActiveForTab.delete(tabId);
+  parentForTab.delete(tabId);
 });
 
 browser.tabs.onActivated.addListener(async activeInfo => {
-  const previousTab = await browser.runtime.sendMessage(TST_ID, {
+  const [tab, previousTab] = await browser.runtime.sendMessage(TST_ID, {
     type: 'get-tree',
-    tab:  activeInfo.previousTabId
+    tabs: [activeInfo.tabId, activeInfo.previousTabId]
   });
   if (previousTab.states.includes('collapsed') ||
       !previousTab.states.includes('subtree-collapsed'))
     reserveToUpdateTab(activeInfo.previousTabId);
 
   reserveToUpdateTab(activeInfo.tabId);
+  tryUpdateSuccessorTabFor(tab);
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
@@ -254,12 +269,20 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false } =
         !tab.states.includes('subtree-collapsed'))))
     reserveToSetContents(tabId, null, null);
 
-  if (tab.ancestorTabIds.length == 0)
+  if (tab.ancestorTabIds.length == 0) {
+    parentForTab.delete(tab.id);
     return;
+  }
+
+  parentForTab.set(tab.id, tab.ancestorTabIds[0]);
 
   const contents = lastActiveTab && buildContentsForTab(lastActiveTab);
+  let lastAncestor = null;
   for (const ancestorId of tab.ancestorTabIds) {
     reserveToSetContents(ancestorId, lastActiveTab.id, contents);
+    if (lastAncestor)
+      parentForTab.set(lastAncestor, ancestorId);
+    lastAncestor = ancestorId;
   }
 }
 
@@ -312,10 +335,28 @@ async function updateAllTabs(options = {}) {
           lastActiveTabId,
           lastActiveTab && buildContentsForTab(lastActiveTab)
         );
+        if (lastActiveTab)
+          parentForTab.set(lastActiveTabId, tab.id);
       }
       else {
         updateTab(tab.id, tab, { initializing: true });
       }
     });
   }
+}
+
+async function tryUpdateSuccessorTabFor(tab) {
+  if (!tab)
+    return;
+  const ancestors = await browser.runtime.sendMessage(TST_ID, {
+    type: 'get-tree',
+    tabs: tab.ancestorTabIds
+  });
+  if (!ancestors)
+    return;
+  const nearestVisibleAncestor = ancestors.find(tab => !tab.states.includes('collapsed'));
+  if (nearestVisibleAncestor)
+    browser.tabs.update(tab.id, {
+      successorTabId: nearestVisibleAncestor.id
+    });
 }
