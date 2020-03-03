@@ -71,6 +71,8 @@ async function registerToTST() {
         'try-move-focus-from-collapsing-tree',
         'tab-mousedown',
         'tab-dblclicked',
+        'tree-attached',
+        'tree-detached',
         'tree-collapsed-state-changed'
       ],
       style: STYLE_FOR_EXTRA_TAB_CONTENTS
@@ -160,6 +162,16 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           }
           break;
 
+        case 'tree-attached':
+          if (message.tab.active)
+            reserveToUpdateTab(message.tab.id);
+          break;
+
+        case 'tree-detached':
+          if (lastActiveForTab.get(message.oldParent.id) == message.tab.id)
+            reserveToUpdateTab(message.oldParent.id);
+          break;
+
         case 'tree-collapsed-state-changed':
           if (lastExpandingTreeClearTimer)
             clearTimeout(lastExpandingTreeClearTimer);
@@ -167,6 +179,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             lastExpandingTreeClearTimer = null;
             lastExpandingTree = null;
           }, 250);
+          break;
       }
       break;
   }
@@ -232,7 +245,7 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false } =
   if (tab.ancestorTabIds.length == 0)
     return;
 
-  const contents = buildContentsForTab(lastActiveTab);
+  const contents = lastActiveTab && buildContentsForTab(lastActiveTab);
   for (const ancestorId of tab.ancestorTabIds) {
     reserveToSetContents(ancestorId, lastActiveTab.id, contents);
   }
