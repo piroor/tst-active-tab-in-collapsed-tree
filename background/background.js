@@ -272,7 +272,7 @@ function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
   reserveToUpdateTab.reserved.set(tabId, setTimeout(() => {
     reserveToUpdateTab.reserved.delete(tabId);
     updateTab(tabId, lastActiveTab, options);
-  }, 150));
+  }, 0));
 }
 reserveToUpdateTab.reserved = new Map();
 
@@ -339,7 +339,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
       id:    tabId,
       contents
     });
-  }, 150));
+  }, 0));
 }
 reserveToSetContents.reserved = new Map();
 
