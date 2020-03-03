@@ -187,7 +187,8 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 
         case 'tree-collapsed-state-changed': {
           const lastActiveId = lastActiveForTab.get(message.tab.id);
-          if (lastActiveId)
+          if (lastActiveId &&
+              message.collapsed)
             browser.runtime.sendMessage(TST_ID, {
               type: 'get-tree',
               tab:  lastActiveId
