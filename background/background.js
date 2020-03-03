@@ -8,11 +8,11 @@
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 const STYLE_FOR_EXTRA_TAB_CONTENTS = `
-  %CONTAINER%:not(.subtree-collapsed) {
+  tab-item:not(.subtree-collapsed) ::part(%EXTRA_CONTENTS_PART% container) {
     display: none;
   }
 
-  %CONTAINER% {
+  ::part(%EXTRA_CONTENTS_PART% container) {
     border: 1px solid ThreeDShadow;
     background: ButtonFace;
     bottom: 0;
@@ -23,25 +23,25 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     right: 0;
   }
 
-  %CONTAINER% > .active-tab {
+  ::part(%EXTRA_CONTENTS_PART% tab) {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     padding: 0.2em;
   }
 
-  %CONTAINER% > .active-tab > .title {
+  ::part(%EXTRA_CONTENTS_PART% title) {
     overflow: hidden;
     text-overflow: ".."; /*ellipsis*/;
     white-space: pre;
   }
 
-  %CONTAINER% > .active-tab.active {
+  ::part(%EXTRA_CONTENTS_PART% tab active) {
     background: ActiveCaption;
     color: CaptionText;
   }
 
-  %CONTAINER% img {
+  ::part(%EXTRA_CONTENTS_PART% favicon) {
     height: 12px;
     margin-right: 0.25em;
     max-height: 12px;
@@ -49,7 +49,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     width: 12px;
   }
 
-  %CONTAINER% img[src="#"] {
+  ::part(%EXTRA_CONTENTS_PART% favicon sanitized) {
     visibility: hidden;
   }
 `;
@@ -72,7 +72,8 @@ async function registerToTST() {
         'tab-mousedown',
         'tab-dblclicked',
         'tree-collapsed-state-changed'
-      ]
+      ],
+      style: STYLE_FOR_EXTRA_TAB_CONTENTS
     });
     updateAllTabs();
   }
@@ -242,7 +243,6 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-tab-contents',
       id:    tabId,
-      style: STYLE_FOR_EXTRA_TAB_CONTENTS,
       contents
     });
   }, 150));
@@ -250,7 +250,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
 reserveToSetContents.reserved = new Map();
 
 function buildContentsForTab(tab) {
-  return `<span class="active-tab ${tab.active ? 'active' : ''}"><img src="${tab.favIconUrl}"><span class="title" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span></span>`;
+  return `<span part="tab ${tab.active ? 'active' : ''}"><img part="favicon" src="${tab.favIconUrl}"><span part="title" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span></span>`;
 }
 
 function sanitzeForHTML(string) {
