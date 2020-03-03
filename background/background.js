@@ -70,6 +70,7 @@ async function registerToTST() {
         'try-expand-tree-from-focused-parent',
         'try-move-focus-from-collapsing-tree',
         'tab-mousedown',
+        'tab-clicked',
         'tab-dblclicked',
         'tree-attached',
         'tree-detached',
@@ -130,6 +131,17 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             // Clear last active descendant for a parent tab
             // when it is clicked/focused while it is expanded.
             reserveToUpdateTab(message.tab.id);
+          }
+          break;
+
+        case 'tab-clicked':
+          if (message.button == 1 &&
+              message.originalTarget) {
+            const lastActive = lastActiveForTab.get(message.tab.id);
+            if (lastActive) {
+              browser.tabs.remove(lastActive);
+              return Promise.resolve(true); // cancel default event handling of TST
+            }
           }
           break;
 
