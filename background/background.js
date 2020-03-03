@@ -132,6 +132,15 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           break;
 
         case 'tab-dblclicked':
+          if (message.button != 0 ||
+              message.twisty ||
+              message.soundButton ||
+              message.closebox ||
+              message.altKey ||
+              message.ctrlKey ||
+              message.metaKey ||
+              message.shiftKey)
+            return;
           if (message.originalTarget) {
             const lastActive = lastActiveForTab.get(message.tab.id);
             if (lastActive) {
