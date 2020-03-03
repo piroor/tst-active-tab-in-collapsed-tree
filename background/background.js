@@ -248,7 +248,7 @@ browser.tabs.onActivated.addListener(async activeInfo => {
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
-  reserveToUpdateTab(tabId, tab);
+  reserveToUpdateTab(tabId, tab, { update: true });
 }, { properties: ['title', 'favIconUrl'] });
 
 
@@ -263,7 +263,7 @@ function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
 }
 reserveToUpdateTab.reserved = new Map();
 
-async function updateTab(tabId, lastActiveTab = null, { initializing = false, clear = false } = {}) {
+async function updateTab(tabId, lastActiveTab = null, { initializing = false, clear = false, update = false } = {}) {
   const [nativeTab, tree] = await Promise.all([
     browser.tabs.get(tabId),
     browser.runtime.sendMessage(TST_ID, {
@@ -298,6 +298,8 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false, cl
   const contents = !clear && lastActiveTab && buildContentsForTab(lastActiveTab);
   let lastAncestor = null;
   for (const ancestorId of tab.ancestorTabIds) {
+    if (!update ||
+        lastActiveForTab.get(ancestorId) == lastActiveTab.id)
     reserveToSetContents(ancestorId, lastActiveTab.id, contents);
     if (lastAncestor)
       parentForTab.set(lastAncestor, ancestorId);
