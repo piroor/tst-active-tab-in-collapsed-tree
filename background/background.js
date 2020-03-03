@@ -208,8 +208,20 @@ browser.tabs.onRemoved.addListener(tabId => {
   const parentId = parentForTab.get(tabId);
   if (parentId) {
     const lastActiveId = lastActiveForTab.get(parentId);
-    if (lastActiveId && lastActiveId == tabId)
-      reserveToUpdateTab(parentId);
+    if (lastActiveId && lastActiveId == tabId) {
+      browser.runtime.sendMessage(TST_ID, {
+        type: 'get-tree',
+        tab:  parentId
+      }).then(async tab => {
+        if (!tab)
+          return;
+        for (const ancestorId of [parentId].concat(tab.ancestorTabIds)) {
+          const lastActiveId = lastActiveForTab.get(ancestorId);
+          if (lastActiveId == tabId)
+            reserveToUpdateTab(ancestorId, null, { clear: true });
+        }
+      });
+    }
   }
   contentsForTab.delete(tabId);
   lastActiveForTab.delete(tabId);
@@ -234,18 +246,18 @@ browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
 }, { properties: ['title', 'favIconUrl'] });
 
 
-function reserveToUpdateTab(tabId, lastActiveTab) {
+function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
   const timer = reserveToUpdateTab.reserved.get(tabId);
   if (timer)
     clearTimeout(timer);
   reserveToUpdateTab.reserved.set(tabId, setTimeout(() => {
     reserveToUpdateTab.reserved.delete(tabId);
-    updateTab(tabId, lastActiveTab);
+    updateTab(tabId, lastActiveTab, options);
   }, 150));
 }
 reserveToUpdateTab.reserved = new Map();
 
-async function updateTab(tabId, lastActiveTab = null, { initializing = false } = {}) {
+async function updateTab(tabId, lastActiveTab = null, { initializing = false, clear = false } = {}) {
   const [nativeTab, tree] = await Promise.all([
     browser.tabs.get(tabId),
     browser.runtime.sendMessage(TST_ID, {
@@ -262,7 +274,8 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false } =
 
   // Clear last active descendant when a parent tab
   // itself gets focused while it is completely expanded.
-  if (initializing ||
+  if (clear ||
+      initializing ||
       tab.children.length == 0 ||
       (tabId != lastExpandingTree &&
        (!tab.states.includes('collapsed') &&
