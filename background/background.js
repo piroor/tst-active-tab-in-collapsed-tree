@@ -300,7 +300,7 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false, cl
   for (const ancestorId of tab.ancestorTabIds) {
     if (!update ||
         lastActiveForTab.get(ancestorId) == lastActiveTab.id)
-    reserveToSetContents(ancestorId, lastActiveTab.id, contents);
+      reserveToSetContents(ancestorId, lastActiveTab.id, contents);
     if (lastAncestor)
       parentForTab.set(lastAncestor, ancestorId);
     lastAncestor = ancestorId;
