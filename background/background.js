@@ -47,6 +47,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     --tab-surface: var(--tab-surface-active);
     --tab-text: var(--tab-text-active);
     border-left-color: var(--tab-highlighter);
+    text-shadow: var(--tab-text-shadow);
   }
   ::part(%EXTRA_CONTENTS_PART% tab active):hover {
     --tab-surface: var(--tab-surface-active-hover);
