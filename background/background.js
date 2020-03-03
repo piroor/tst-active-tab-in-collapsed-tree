@@ -223,6 +223,7 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false } =
   // Clear last active descendant when a parent tab
   // itself gets focused while it is completely expanded.
   if (initializing ||
+      tab.children.length == 0 ||
       (tabId != lastExpandingTree &&
        (!tab.states.includes('collapsed') &&
         !tab.states.includes('subtree-collapsed'))))
