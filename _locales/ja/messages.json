@@ -1,4 +1,4 @@
 {
   "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
-  "extensionDescription": { "message": "折りたたまれたツリー内で最後にアクティブだったタブを表示するUIを提供します。" }
+  "extensionDescription": { "message": "Tree Style Tabに対し、折りたたまれたツリー内で最後にアクティブだったタブを表示するUIを提供します。" }
 }
