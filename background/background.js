@@ -204,7 +204,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
   }
 });
 
-browser.tabs.onRemoved.addListener(tabId => {
+browser.tabs.onRemoved.addListener(async tabId => {
   const parentId = parentForTab.get(tabId);
   if (parentId) {
     const lastActiveId = lastActiveForTab.get(parentId);
@@ -220,7 +220,7 @@ browser.tabs.onRemoved.addListener(tabId => {
           if (lastActiveId == tabId)
             reserveToUpdateTab(ancestorId, null, { clear: true });
         }
-      });
+      }).catch(console.error);
     }
   }
   contentsForTab.delete(tabId);
