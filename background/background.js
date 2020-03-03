@@ -217,8 +217,12 @@ browser.tabs.onRemoved.addListener(async tabId => {
           return;
         for (const ancestorId of [parentId].concat(tab.ancestorTabIds)) {
           const lastActiveId = lastActiveForTab.get(ancestorId);
-          if (lastActiveId == tabId)
+          if (lastActiveId == tabId) {
+            // Clear these information immediately to prevent updating by tree-detached.
+            contentsForTab.delete(ancestorId);
+            lastActiveForTab.delete(ancestorId);
             reserveToUpdateTab(ancestorId, null, { clear: true });
+          }
         }
       }).catch(console.error);
     }
@@ -289,7 +293,7 @@ async function updateTab(tabId, lastActiveTab = null, { initializing = false, cl
 
   parentForTab.set(tab.id, tab.ancestorTabIds[0]);
 
-  const contents = lastActiveTab && buildContentsForTab(lastActiveTab);
+  const contents = !clear && lastActiveTab && buildContentsForTab(lastActiveTab);
   let lastAncestor = null;
   for (const ancestorId of tab.ancestorTabIds) {
     reserveToSetContents(ancestorId, lastActiveTab.id, contents);
