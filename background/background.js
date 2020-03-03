@@ -13,10 +13,9 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   }
 
   ::part(%EXTRA_CONTENTS_PART% container) {
-    border: 1px solid ThreeDShadow;
-    background: ButtonFace;
+    background: var(--tabbar-bg, var(--bg-color, ButtonFace));
+    border: 1px solid var(--tab-border);
     bottom: 0;
-    color: ButtonText;
     left: 0;
     line-height: 1;
     position: absolute;
@@ -24,10 +23,18 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
+    border-left: var(--tab-highlighter-size) solid transparent;
+    background: var(--tab-surface);
+    color: var(--tab-text);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     padding: 0.2em;
+    transition: background 0.25s ease-out;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab):hover {
+    --tab-surface: var(--tab-surface-hover);
+    border-left-color: var(--tab-highlighter-inactive);
   }
 
   ::part(%EXTRA_CONTENTS_PART% title) {
@@ -37,8 +44,13 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab active) {
-    background: ActiveCaption;
-    color: CaptionText;
+    --tab-surface: var(--tab-surface-active);
+    --tab-text: var(--tab-text-active);
+    border-left-color: var(--tab-highlighter);
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab active):hover {
+    --tab-surface: var(--tab-surface-active-hover);
+    border-left-color: var(--tab-highlighter);
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon) {
