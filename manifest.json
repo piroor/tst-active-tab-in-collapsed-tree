@@ -14,7 +14,8 @@
   "default_locale": "en",
   "applications": {
     "gecko": {
-      "id": "tst-active-tab-in-collapsed-tree@piro.sakura.ne.jp"
+      "id": "tst-active-tab-in-collapsed-tree@piro.sakura.ne.jp",
+      "strict_min_version": "72.0"
     }
   }
 }
