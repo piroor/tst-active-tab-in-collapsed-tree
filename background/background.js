@@ -243,7 +243,8 @@ browser.tabs.onActivated.addListener(async activeInfo => {
     reserveToUpdateTab(activeInfo.previousTabId);
 
   reserveToUpdateTab(activeInfo.tabId);
-  tryUpdateSuccessorTabFor(tab);
+  if (tab.states.includes('collapsed'))
+    tryUpdateSuccessorTabFor(tab);
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
