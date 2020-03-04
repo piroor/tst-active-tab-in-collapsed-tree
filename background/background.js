@@ -437,15 +437,26 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
     else
       browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
 
+    setContents(tabId);
+  }, 0));
+}
+reserveToSetContents.reserved = new Map();
+
+function setContents(tabId) {
+  const contents = contentsForTab.get(tabId);
+  if (contents)
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-tab-contents',
       id:    tabId,
       style: THROBBER_ANIMATION, // Gecko doesn't apply animation defined in the owner document to shadow DOM elements...
       contents
     });
-  }, 0));
+  else
+    browser.runtime.sendMessage(TST_ID, {
+      type: 'clear-extra-tab-contents',
+      id:   contents
+    });
 }
-reserveToSetContents.reserved = new Map();
 
 function buildContentsForTab(tab) {
   const active = tab.active ? 'active' : '';
