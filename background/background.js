@@ -9,7 +9,7 @@ const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   tab-item:not(.subtree-collapsed) ::part(%EXTRA_CONTENTS_PART% container) {
-    display: none;
+    visibility: collapse;
   }
 
   ::part(%EXTRA_CONTENTS_PART% container) {
