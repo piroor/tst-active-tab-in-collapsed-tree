@@ -6,8 +6,7 @@
         "hash": "5a6aa1a824cdb8486c3ad323b73a3a00"
     },
     "config_tabDragBehavior_description": {
-        "message": "Firefox의 제한 때문에 탭 바 밖으로 드롭한 후 탭을 어떻게 취급할지는 드래그를 시작할 때 결정할 필요가 있습니다. 드랍 후 탭을 취급은 드래그를 시작할 때 Shift키를 누르거나 탭의 왼쪽(또는 오른쪽) 끝 부분에 표시되는 드래그용 영역에 의해 결정할 수 있습니다.",
-        "hash": "7e79eeb08585e23403fd461eacea845c"
+        "message": "Firefox의 제한 때문에 탭 바 밖으로 드롭한 후 탭을 어떻게 취급할지는 드래그를 시작할 때 결정할 필요가 있습니다."
     },
     "config_tabDragBehavior_label": {
         "message": "일반적인 드래그: ",

@@ -2,7 +2,7 @@
   "config_onAction_none":       { "message": "無動作" },
 
   "config_tabDragBehavior_caption":       { "message": "將樹拖曳之分頁欄外時" },
-  "config_tabDragBehavior_description":   { "message": "由於 Firefox 的限制，在分頁欄位放置時的行為取決於開始拖曳時的操作。按住 Shift 鍵或拖曳分頁左/右側的「拖放圖示」改變行為。" },
+  "config_tabDragBehavior_description":   { "message": "由於 Firefox 的限制，在分頁欄位放置時的行為取決於開始拖曳時的操作。" },
   "config_tabDragBehavior_label":         { "message": "拖曳：" },
   "config_tabDragBehaviorShift_label":    { "message": "Shift + 拖曳：" },
   "config_tabDragBehavior_tearoff_tree":  { "message": "分離整棵樹至新視窗(無法加入書籤)" },

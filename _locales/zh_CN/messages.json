@@ -6,8 +6,7 @@
         "hash": "ddfedf8c4a80cb4e12568d1ec110d269"
     },
     "config_tabDragBehavior_description": {
-        "message": "因为 Firefox 的限制，你必须在开始拖拽时决定：标签页在树形标签页侧栏以外释放时被当作什么。开始拖拽时按下 Shift 或者通过 “拖拽柄” 的小型可拖拽工具提示（靠近左侧或右侧边界）可以改变此动作。",
-        "hash": "7e79eeb08585e23403fd461eacea845c"
+        "message": "因为 Firefox 的限制，你必须在开始拖拽时决定：标签页在树形标签页侧栏以外释放时被当作什么。"
     },
     "config_tabDragBehavior_label": {
         "message": "拖拽：",

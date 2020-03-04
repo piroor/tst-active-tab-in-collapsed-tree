@@ -2,7 +2,7 @@
   "config_onAction_none":       { "message": "Nichts machen" },
 
   "config_tabDragBehavior_caption":       { "message": "Wenn ein Zweig außerhalb der Tableiste gezogen wird" },
-  "config_tabDragBehavior_description":   { "message": "Aufgrund von Firefox Einschränkungen muss beim Beginn des Ziehens bekannt sein, wie Tabs beim Ablegen außerhalb der Seitenleiste von TST behandelt werden sollen. Shift beim Beginn des Ziehens drücken oder der \"Anfasser\", ein kleiner beweglicher Tooltip links (oder rechts) neben jedem Tab, kann genutzt werden, um die Aktion zu wechseln." },
+  "config_tabDragBehavior_description":   { "message": "Aufgrund von Firefox Einschränkungen muss beim Beginn des Ziehens bekannt sein, wie Tabs beim Ablegen außerhalb der Seitenleiste von TST behandelt werden sollen." },
   "config_tabDragBehavior_label":         { "message": "Ziehen:" },
   "config_tabDragBehaviorShift_label":    { "message": "Shift-Ziehen:" },
   "config_tabDragBehavior_tearoff_tree":  { "message": "Gesamten Zweig vom Fenster ablösen (aber unmöglich, Lesezeichen anzulegen)" },
