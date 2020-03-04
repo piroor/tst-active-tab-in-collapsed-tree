@@ -478,6 +478,7 @@ function buildContentsForTab(tab) {
   return `<span part="tab ${active}"
                 draggable="true"
                 data-drag-data="${sanitzeForHTML(JSON.stringify(dragData))}"
+                data-tab-id="${tab.id}"
                 >${icon}${label}${highlighter}</span>`;
 }
 
