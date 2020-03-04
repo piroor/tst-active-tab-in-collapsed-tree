@@ -5,6 +5,10 @@
 */
 'use strict';
 
+import {
+  configs
+} from '/common/common.js';
+
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 const STYLE_FOR_EXTRA_TAB_CONTENTS = `
