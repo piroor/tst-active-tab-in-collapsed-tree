@@ -21,14 +21,14 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     position: absolute;
     right: 0;
 
-    --throbber-size: 12px;
-    --favicon-size: 12px;
+    --throbber-size: 1.2em;
+    --favicon-size: 1.2em;
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
     border-left: var(--tab-highlighter-size) solid transparent;
-    background: var(--tab-surface);
-    color: var(--tab-text);
+    background: var(--tab-surface-regular);
+    color: var(--tab-text-regular);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
