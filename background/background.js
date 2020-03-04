@@ -20,6 +20,9 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     line-height: 1;
     position: absolute;
     right: 0;
+
+    --throbber-size: 12px;
+    --favicon-size: 12px;
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
@@ -55,15 +58,62 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon) {
-    height: 12px;
+    height: var(--favicon-size);
     margin-right: 0.25em;
-    max-height: 12px;
-    max-width: 12px;
-    width: 12px;
+    max-height: var(--favicon-size);
+    max-width: var(--favicon-size);
+    width: var(--favicon-size);
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon sanitized) {
     visibility: hidden;
+  }
+
+
+  /* throbber */
+
+  tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber) {
+    margin-right: 0.25em;
+
+    display: inline-block;
+    font-size: var(--throbber-size);
+    height: var(--throbber-size);
+    min-height: var(--throbber-size);
+    min-width: var(--throbber-size);
+    max-height: var(--throbber-size);
+    max-width: var(--throbber-size);
+    overflow: hidden;
+    padding: 0;
+    pointer-events: none;
+    position: relative;
+    width: var(--throbber-size);
+  }
+
+  tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image active) {
+    --throbber-color: var(--throbber-color-active);
+  }
+
+  tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image) {
+    height: var(--throbber-size);
+    position: absolute;
+    width: calc(var(--throbber-size) * 60);
+    animation: throbber 1.05s var(--throbber-animation-steps) infinite;
+
+    fill: var(--throbber-color);
+    box-shadow: 0 0 2px var(--throbber-shadow-color);
+    -moz-context-properties: fill;
+    background: url("/sidebar/styles/throbber.svg") no-repeat;
+  }
+  :root.simulate-svg-context-fill tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image) {
+    background: var(--throbber-color);
+    mask: url("/sidebar/styles/throbber.svg") no-repeat left center / 100%;
+  }
+`;
+
+const THROBBER_ANIMATION = `
+  @keyframes throbber {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
   }
 `;
 
@@ -269,7 +319,7 @@ browser.tabs.onActivated.addListener(async activeInfo => {
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
   reserveToUpdateTab(tabId, tab, { update: true });
-}, { properties: ['title', 'favIconUrl'] });
+}, { properties: ['title', 'favIconUrl', 'status'] });
 
 
 function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
@@ -344,6 +394,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-tab-contents',
       id:    tabId,
+      style: THROBBER_ANIMATION, // Gecko doesn't apply animation defined in the owner document to shadow DOM elements...
       contents
     });
   }, 0));
@@ -351,7 +402,12 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
 reserveToSetContents.reserved = new Map();
 
 function buildContentsForTab(tab) {
-  return `<span part="tab ${tab.active ? 'active' : ''}"><img part="favicon" src="${tab.favIconUrl}"><span part="title" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span></span>`;
+  const active = tab.active ? 'active' : '';
+  const icon = tab.status == 'loading' ?
+    `<span part="throbber loadnig"><span part="throbber-image ${active}"></span></span>` :
+    `<img part="favicon" src="${tab.favIconUrl}">`;
+  const label = `<span part="title ${active}" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span>`;
+  return `<span part="tab ${active}">${icon}${label}</span>`;
 }
 
 function sanitzeForHTML(string) {
