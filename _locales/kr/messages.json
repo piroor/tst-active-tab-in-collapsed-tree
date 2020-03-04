@@ -1,4 +1,6 @@
 {
+  "config_onAction_none":       { "message": "동작 없음" },
+
     "config_tabDragBehavior_caption": {
         "message": "트리가 탭 바 밖으로 드랍되었을 때",
         "hash": "5a6aa1a824cdb8486c3ad323b73a3a00"

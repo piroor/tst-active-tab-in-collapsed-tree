@@ -8,6 +8,10 @@
 import Configs from '/extlib/Configs.js';
 
 export const configs = new Configs({
+  onClick:       'focus',
+  onDblClick:    'expand',
+  onMiddleClick: 'close',
+
   tabDragBehavior:      'tree,detach',
   tabDragBehaviorShift: 'tree,link'
 }, {

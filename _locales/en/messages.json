@@ -2,6 +2,16 @@
   "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
   "extensionDescription": { "message": "Provides UI to show last active tab in a collapsed tree in Tree Style Tab." },
 
+  "config_onAction_caption":    { "message": "Action on last active tab on a collapsed tree" },
+  "config_onAction_focus":      { "message": "Focus to the tab" },
+  "config_onAction_close":      { "message": "Close the tab" },
+  "config_onAction_expand":     { "message": "Expand the tree" },
+  "config_onAction_none":       { "message": "Do nothing" },
+  "config_onClick_label":       { "message": "Regular Click" },
+  "config_onMiddleClick_label": { "message": "Middle Click" },
+  "config_onDblClick_label":    { "message": "Double Click" },
+
+
   "config_tabDragBehavior_caption":       { "message": "When a tree is dropped outside of the tab bar" },
   "config_tabDragBehavior_description":   { "message": "Due to Firefox's restrictions, you need to decide it when you start dragging: how tabs are treated on dropped outside of TST's sidebar. Shift key pressed on starting of dragging or the \"drag handle\" a small draggable tooltip appearing near the left (or right) edge of each tab are available to switch the action." },
   "config_tabDragBehavior_label":         { "message": "Drag:" },

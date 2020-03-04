@@ -203,10 +203,8 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             return;
           if (message.originalTarget) {
             const lastActive = lastActiveForTab.get(message.tab.id);
-            if (lastActive) {
-              browser.tabs.update(lastActive, { active: true });
-              return Promise.resolve(true); // cancel default event handling of TST
-            }
+            if (lastActive)
+              return Promise.resolve(doActionFor(lastActive, configs.onClick));
           }
           else if (!message.tab.states.includes('subtree-collapsed')) {
             // Clear last active descendant for a parent tab
@@ -219,10 +217,8 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           if (message.button == 1 &&
               message.originalTarget) {
             const lastActive = lastActiveForTab.get(message.tab.id);
-            if (lastActive) {
-              browser.tabs.remove(lastActive);
-              return Promise.resolve(true); // cancel default event handling of TST
-            }
+            if (lastActive)
+              return Promise.resolve(doActionFor(lastActive, configs.onMiddleClick));
           }
           break;
 
@@ -239,9 +235,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           if (message.originalTarget) {
             const lastActive = lastActiveForTab.get(message.tab.id);
             if (lastActive)
-              expandTreeFor(lastActive);
-              return Promise.resolve(true); // cancel default event handling of TST
-            }
+              return Promise.resolve(doActionFor(lastActive, configs.onDblClick));
           }
           break;
 
@@ -545,5 +539,24 @@ async function expandTreeFor(tabId) {
       type: 'expand-tree',
       tab:  ancestorId
     });
+  }
+}
+
+function doActionFor(tabId, action) {
+  switch (action) {
+    case 'focus':
+      browser.tabs.update(tabId, { active: true });
+      return true;
+
+    case 'close':
+      browser.tabs.remove(tabId);
+      return true;
+
+    case 'expand':
+      expandTreeFor(tabId);
+      return true;
+
+    default:
+      return false;
   }
 }

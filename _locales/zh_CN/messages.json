@@ -1,4 +1,6 @@
 {
+  "config_onAction_none":       { "message": "什么都不做" },
+
     "config_tabDragBehavior_caption": {
         "message": "当一个树被拖拽到侧栏外部时",
         "hash": "ddfedf8c4a80cb4e12568d1ec110d269"

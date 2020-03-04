@@ -2,6 +2,15 @@
   "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
   "extensionDescription": { "message": "Tree Style Tabに対し、折りたたまれたツリー内で最後にアクティブだったタブを表示するUIを提供します。" },
 
+  "config_onAction_caption":    { "message": "折りたたまれたツリーで最後にアクティブだったタブに対する操作" },
+  "config_onAction_focus":      { "message": "タブを選択する" },
+  "config_onAction_close":      { "message": "タブを閉じる" },
+  "config_onAction_expand":     { "message": "ツリーを展開する" },
+  "config_onAction_none":       { "message": "何もしない" },
+  "config_onClick_label":       { "message": "通常のクリック" },
+  "config_onMiddleClick_label": { "message": "ミドルクリック" },
+  "config_onDblClick_label":    { "message": "ダブルクリック" },
+
   "config_tabDragBehavior_caption":       { "message": "ツリーがタブバーの外にドロップされた時" },
   "config_tabDragBehavior_description":   { "message": "Firefoxの制限のため、タブバー外へのドロップ後にタブをどう取り扱うかは、ドラッグ操作開始時に決定する必要があります。ドロップ後のタブの取り扱いは、ドラッグ開始時に押すShiftキー、またはタブの左（または右）端付近に表示されるドラッグ用つまみによって決定できます。" },
   "config_tabDragBehavior_label":         { "message": "通常のドラッグ:" },
