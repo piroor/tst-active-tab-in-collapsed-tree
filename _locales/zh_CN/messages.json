@@ -1,0 +1,40 @@
+{
+    "config_tabDragBehavior_caption": {
+        "message": "当一个树被拖拽到侧栏外部时",
+        "hash": "ddfedf8c4a80cb4e12568d1ec110d269"
+    },
+    "config_tabDragBehavior_description": {
+        "message": "因为 Firefox 的限制，你必须在开始拖拽时决定：标签页在树形标签页侧栏以外释放时被当作什么。开始拖拽时按下 Shift 或者通过 “拖拽柄” 的小型可拖拽工具提示（靠近左侧或右侧边界）可以改变此动作。",
+        "hash": "7e79eeb08585e23403fd461eacea845c"
+    },
+    "config_tabDragBehavior_label": {
+        "message": "拖拽：",
+        "hash": "6957fbb9cf5b17c85214d3065e5d9fb3"
+    },
+    "config_tabDragBehaviorShift_label": {
+        "message": "按住 Shift 拖拽：",
+        "hash": "c26c7dbae02a5f950080f2e84b543a51"
+    },
+    "config_tabDragBehavior_tearoff_tree": {
+        "message": "从窗口剥离整颗树（但无法创建书签）",
+        "hash": "4723ca0b18c76b5e9b4a8000d8ac2292"
+    },
+    "config_tabDragBehavior_bookmark_tree": {
+        "message": "为整颗树创建书签（但无法从窗口剥离）",
+        "hash": "356fc53a67e8318e0226f69d53783d6f"
+    },
+    "config_tabDragBehavior_tearoff_tab": {
+        "message": "从窗口剥离单一标签页（但无法创建书签）",
+        "hash": "024c0183bb540674a551b18d646d4ef5"
+    },
+    "config_tabDragBehavior_bookmark_tab": {
+        "message": "为单一标签页创建书签（但无法从窗口剥离）",
+        "hash": "222b9f01d390b68db03215b3766565a4"
+    },
+    "config_tabDragBehavior_none": {
+        "message": "什么都不做",
+        "hash": "a0a28b9a09a44d3e69599b6500e47a0e"
+    },
+
+    "__WET_LOCALE__": { "message": "zh-CN" }
+}

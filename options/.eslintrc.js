@@ -3,14 +3,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 */
+/*eslint-env commonjs*/
+/*eslint quote-props: ['error', "always"] */
+
 'use strict';
 
-import Configs from '/extlib/Configs.js';
-
-export const configs = new Configs({
-  tabDragBehavior:      'tree,detach',
-  tabDragBehaviorShift: 'tree,link'
-}, {
-  localKeys: [
-  ]
-});
+module.exports = {
+  'extends': [
+    '../tools/eslint/for-module.js',
+  ],
+};

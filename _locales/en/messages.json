@@ -1,4 +1,14 @@
 {
   "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
-  "extensionDescription": { "message": "Provides UI to show last active tab in a collapsed tree in Tree Style Tab." }
+  "extensionDescription": { "message": "Provides UI to show last active tab in a collapsed tree in Tree Style Tab." },
+
+  "config_tabDragBehavior_caption":       { "message": "When a tree is dropped outside of the tab bar" },
+  "config_tabDragBehavior_description":   { "message": "Due to Firefox's restrictions, you need to decide it when you start dragging: how tabs are treated on dropped outside of TST's sidebar. Shift key pressed on starting of dragging or the \"drag handle\" a small draggable tooltip appearing near the left (or right) edge of each tab are available to switch the action." },
+  "config_tabDragBehavior_label":         { "message": "Drag:" },
+  "config_tabDragBehaviorShift_label":    { "message": "Shift-Drag:" },
+  "config_tabDragBehavior_tearoff_tree":  { "message": "Detach Whole Tree from the window (but impossible to create bookmarks)" },
+  "config_tabDragBehavior_bookmark_tree": { "message": "Create links or bookmarks from Whole Tree (but impossible to detach from the window)" },
+  "config_tabDragBehavior_tearoff_tab":   { "message": "Detach Individual Tab from the window (but impossible to create bookmark)" },
+  "config_tabDragBehavior_bookmark_tab":  { "message": "Create link or bookmark from Individual Tab (but impossible to detach from the window)" },
+  "config_tabDragBehavior_none":          { "message": "Do nothing" }
 }
