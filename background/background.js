@@ -413,8 +413,8 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
   reserveToSetContents.reserved.set(tabId, setTimeout(() => {
     reserveToSetContents.reserved.delete(tabId);
     if (lastActiveTabId && contents) {
-    contentsForTab.set(tabId, contents);
-    lastActiveForTab.set(tabId, lastActiveTabId);
+      contentsForTab.set(tabId, contents);
+      lastActiveForTab.set(tabId, lastActiveTabId);
       browser.sessions.setTabValue(tabId, 'lastActiveTabId', lastActiveTabId);
     }
     else {
