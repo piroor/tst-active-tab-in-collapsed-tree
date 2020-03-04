@@ -280,23 +280,22 @@ browser.tabs.onRemoved.addListener(async tabId => {
   const parentId = parentForTab.get(tabId);
   if (parentId) {
     const lastActiveId = lastActiveForTab.get(parentId);
-    if (lastActiveId && lastActiveId == tabId) {
-      browser.runtime.sendMessage(TST_ID, {
+    if (lastActiveId) {
+      const tab = await browser.runtime.sendMessage(TST_ID, {
         type: 'get-tree',
         tab:  parentId
-      }).then(async tab => {
-        if (!tab)
-          return;
+      });
+      if (tab) {
         for (const ancestorId of [parentId].concat(tab.ancestorTabIds)) {
           const lastActiveId = lastActiveForTab.get(ancestorId);
-          if (lastActiveId == tabId) {
-            // Clear these information immediately to prevent updating by tree-detached.
-            contentsForTab.delete(ancestorId);
-            lastActiveForTab.delete(ancestorId);
-            reserveToUpdateTab(ancestorId, null, { clear: true });
-          }
+          if (lastActiveId != tabId)
+            continue;
+          // Clear these information immediately to prevent updating by tree-detached.
+          contentsForTab.delete(ancestorId);
+          lastActiveForTab.delete(ancestorId);
+          reserveToUpdateTab(ancestorId, null, { clear: true });
         }
-      }).catch(console.error);
+      }
     }
   }
   contentsForTab.delete(tabId);
@@ -413,14 +412,16 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
     clearTimeout(timer);
   reserveToSetContents.reserved.set(tabId, setTimeout(() => {
     reserveToSetContents.reserved.delete(tabId);
+    if (lastActiveTabId && contents) {
     contentsForTab.set(tabId, contents);
     lastActiveForTab.set(tabId, lastActiveTabId);
-
-    if (lastActiveTabId)
       browser.sessions.setTabValue(tabId, 'lastActiveTabId', lastActiveTabId);
-    else
+    }
+    else {
+      contentsForTab.delete(tabId);
+      lastActiveForTab.delete(tabId);
       browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
-
+    }
     setContents(tabId);
   }, 0));
 }
@@ -438,7 +439,7 @@ function setContents(tabId) {
   else
     browser.runtime.sendMessage(TST_ID, {
       type: 'clear-extra-tab-contents',
-      id:   contents
+      id:   tabId
     });
 }
 
