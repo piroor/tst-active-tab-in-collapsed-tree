@@ -21,8 +21,8 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     position: absolute;
     right: 0;
 
-    --throbber-size: 1.2em;
-    --favicon-size: 1.2em;
+    --throbber-size: 12px;
+    --favicon-size: 12px;
     --tab-surface: var(--tab-surface-regular);
     --tab-text: var(--tab-text-regular);
   }
