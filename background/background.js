@@ -258,7 +258,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 
         case 'tree-detached':
           if (lastActiveForTab.get(message.oldParent.id) == message.tab.id)
-            reserveToUpdateTab(message.oldParent.id);
+            reserveToUpdateTab(message.oldParent.id, null, { clear: true });
           break;
 
         case 'tree-collapsed-state-changed': {
