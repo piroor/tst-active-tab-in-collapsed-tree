@@ -23,12 +23,14 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
 
     --throbber-size: 1.2em;
     --favicon-size: 1.2em;
+    --tab-surface: var(--tab-surface-regular);
+    --tab-text: var(--tab-text-regular);
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
     border-left: var(--tab-highlighter-size) solid transparent;
-    background: var(--tab-surface-regular);
-    color: var(--tab-text-regular);
+    background: var(--tab-surface);
+    color: var(--tab-text);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
