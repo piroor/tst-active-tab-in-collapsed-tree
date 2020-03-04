@@ -238,18 +238,8 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             return;
           if (message.originalTarget) {
             const lastActive = lastActiveForTab.get(message.tab.id);
-            if (lastActive) {
-              browser.runtime.sendMessage(TST_ID, {
-                type: 'get-tree',
-                tab:  lastActive
-              }).then(tab => {
-                for (const ancestorId of tab.ancestorTabIds) {
-                  browser.runtime.sendMessage(TST_ID, {
-                    type: 'expand-tree',
-                    tab:  ancestorId
-                  });
-                }
-              });
+            if (lastActive)
+              expandTreeFor(lastActive);
               return Promise.resolve(true); // cancel default event handling of TST
             }
           }
@@ -543,4 +533,17 @@ async function tryUpdateSuccessorTabFor(tab) {
     browser.tabs.update(tab.id, {
       successorTabId: nearestVisibleAncestor.id
     });
+}
+
+async function expandTreeFor(tabId) {
+  const tab = await browser.runtime.sendMessage(TST_ID, {
+    type: 'get-tree',
+    tab:  tabId
+  });
+  for (const ancestorId of tab.ancestorTabIds) {
+    browser.runtime.sendMessage(TST_ID, {
+      type: 'expand-tree',
+      tab:  ancestorId
+    });
+  }
 }
