@@ -450,13 +450,29 @@ function buildContentsForTab(tab) {
     `<span part="throbber loadnig"><span part="throbber-image ${active}"></span></span>` :
     `<img part="favicon" src="${tab.favIconUrl}">`;
   const label = `<span part="title ${active}" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span>`;
-  const dragData = {
+  const regularActionDragData =  {
     type: 'tab',
     data: {
       id:          tab.id,
-      asTree:      false,
+      asTree:      true,
+      allowDetach: true
+    }
+  };
+  const shiftedActionDragData =  {
+    type: 'tab',
+    data: {
+      id:          tab.id,
+      asTree:      true,
       allowDetach: false
     }
+  };
+  const dragData = {
+    'default':       regularActionDragData,
+    'Ctrl':          regularActionDragData,
+    'MacCtrl':       regularActionDragData,
+    'Shift':         shiftedActionDragData,
+    'Ctrl+Shift':    shiftedActionDragData,
+    'MacCtrl+Shift': shiftedActionDragData
   };
   return `<span part="tab ${active}"
                 draggable="true"
