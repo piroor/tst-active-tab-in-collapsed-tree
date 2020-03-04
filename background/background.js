@@ -35,6 +35,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     flex-direction: row;
     flex-wrap: nowrap;
     padding: 0.2em;
+    position: relative;
     transition: background 0.25s ease-out;
   }
   ::part(%EXTRA_CONTENTS_PART% tab):hover {
@@ -71,6 +72,16 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     visibility: hidden;
   }
 
+  ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter) {
+    background: var(--multiselected-color);
+    bottom: 0;
+    left: 0;
+    opacity: var(--multiselected-color-opacity);
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 100;
+  }
 
   /* throbber */
 
@@ -323,6 +334,35 @@ browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
   reserveToUpdateTab(tabId, tab, { update: true });
 }, { properties: ['title', 'favIconUrl', 'status'] });
 
+const highlightedTabsInWindow = new Map();
+const reservedOnHighlighted = new Map();
+
+browser.tabs.onHighlighted.addListener(highlightInfo => {
+  const timer = reservedOnHighlighted.get(highlightInfo.windowId);
+  if (timer)
+    clearTimeout(timer);
+
+  reservedOnHighlighted.set(highlightInfo.windowId, setTimeout(async () => {
+    reservedOnHighlighted.delete(highlightInfo.windowId);
+
+    const oldHighlighted = highlightedTabsInWindow.get(highlightInfo.windowId) || new Set();
+    const newHighlighted = new Set(highlightInfo.tabIds);
+    for (const id of oldHighlighted) {
+      if (!newHighlighted.has(id))
+        browser.tabs.get(id).then(tab => reserveToUpdateTab(id, tab, { update: true }));
+    }
+    for (const id of newHighlighted) {
+      if (!oldHighlighted.has(id))
+        browser.tabs.get(id).then(tab => reserveToUpdateTab(id, tab, { update: true }));
+    }
+    highlightedTabsInWindow.set(highlightInfo.windowId, newHighlighted);
+  }, 150));
+});
+
+browser.windows.onRemoved.addListener(windowId => {
+  reservedOnHighlighted.delete(windowId);
+});
+
 
 function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
   const timer = reserveToUpdateTab.reserved.get(tabId);
@@ -405,11 +445,12 @@ reserveToSetContents.reserved = new Map();
 
 function buildContentsForTab(tab) {
   const active = tab.active ? 'active' : '';
+  const highlighter = !tab.active && tab.highlighted ? '<span part="multiselected-highlighter"></span>' : '';
   const icon = tab.status == 'loading' ?
     `<span part="throbber loadnig"><span part="throbber-image ${active}"></span></span>` :
     `<img part="favicon" src="${tab.favIconUrl}">`;
   const label = `<span part="title ${active}" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span>`;
-  return `<span part="tab ${active}">${icon}${label}</span>`;
+  return `<span part="tab ${active}">${icon}${label}${highlighter}</span>`;
 }
 
 function sanitzeForHTML(string) {
