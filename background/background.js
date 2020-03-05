@@ -76,23 +76,31 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     visibility: hidden;
   }
 
+  ::part(%EXTRA_CONTENTS_PART% favicon loading) {
+    display: none;
+  }
+
   ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter) {
     background: var(--multiselected-color);
     bottom: 0;
     left: 0;
-    opacity: var(--multiselected-color-opacity);
+    opacity: 0;
     position: absolute;
     right: 0;
     top: 0;
     z-index: 100;
   }
 
+  ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter highlighted) {
+    opacity: var(--multiselected-color-opacity);
+  }
+
   /* throbber */
 
   tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber) {
     margin-right: 0.25em;
+    display: none;
 
-    display: inline-block;
     font-size: var(--throbber-size);
     height: var(--throbber-size);
     min-height: var(--throbber-size);
@@ -104,6 +112,9 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     pointer-events: none;
     position: relative;
     width: var(--throbber-size);
+  }
+  tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber loading) {
+    display: inline-block;
   }
 
   tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image active) {
@@ -445,11 +456,15 @@ function setContents(tabId) {
 
 function buildContentsForTab(tab) {
   const active = tab.active ? 'active' : '';
-  const highlighter = !tab.active && tab.highlighted ? '<span part="multiselected-highlighter"></span>' : '';
-  const icon = tab.status == 'loading' ?
-    `<span part="throbber loadnig"><span part="throbber-image ${active}"></span></span>` :
-    `<img part="favicon" src="${tab.favIconUrl}">`;
+  const highlighted = !tab.active && tab.highlighted ? 'highlighted' : '';
+
+  const icon = [
+    `<span part="throbber ${tab.status}"><span part="throbber-image ${active}"></span></span>`,
+    `<img part="favicon ${tab.status}" src="${tab.favIconUrl}">`
+  ].join('');
   const label = `<span part="title ${active}" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span>`;
+  const highlighter = '<span part="multiselected-highlighter ${highlighted}"></span>';
+
   const regularActionDragData = {
     type: 'tab',
     data: {
