@@ -459,11 +459,19 @@ function buildContentsForTab(tab) {
   const highlighted = !tab.active && tab.highlighted ? 'highlighted' : '';
 
   const icon = [
-    `<span part="throbber ${tab.status}"><span part="throbber-image ${active}"></span></span>`,
-    `<img part="favicon ${tab.status}" src="${tab.favIconUrl}">`
+    `<span anonid="throbber"
+           part="throbber ${tab.status}"
+           ><span part="throbber-image ${active}"></span></span>`,
+    `<img anonid="favicon"
+          part="favicon ${tab.status}"
+          src="${tab.favIconUrl}">`
   ].join('');
-  const label = `<span part="title ${active}" title="${sanitzeForHTML(tab.title)}">${sanitzeForHTML(tab.title)}</span>`;
-  const highlighter = '<span part="multiselected-highlighter ${highlighted}"></span>';
+  const label = `<span anonid="label"
+                       part="title ${active}"
+                       title="${sanitzeForHTML(tab.title)}"
+                       >${sanitzeForHTML(tab.title)}</span>`;
+  const highlighter = `<span anonid="highlighter"
+                             part="multiselected-highlighter ${highlighted}"></span>`;
 
   const regularActionDragData = {
     type: 'tab',
@@ -491,7 +499,8 @@ function buildContentsForTab(tab) {
     'Ctrl+Shift':    shiftedActionDragData,
     'MacCtrl+Shift': shiftedActionDragData
   };
-  return `<span part="tab ${active}"
+  return `<span anonid="tab"
+                part="tab ${active}"
                 draggable="true"
                 data-drag-data="${sanitzeForHTML(JSON.stringify(dragData))}"
                 data-tab-id="${tab.id}"
