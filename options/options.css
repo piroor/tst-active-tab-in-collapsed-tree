@@ -45,3 +45,30 @@ ul p.sub {
   margin-top: 0;
   margin-bottom: 0;
 }
+
+
+table {
+  border-collapse: collapse;
+}
+th + *,
+td + * {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+tbody tr {
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+
+tbody th {
+  font-weight: normal;
+  text-align: left;
+}
+
+td {
+  text-align: center;
+}
+
+table input[type="radio"] {
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
