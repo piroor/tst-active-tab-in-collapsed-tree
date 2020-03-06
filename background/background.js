@@ -37,14 +37,6 @@ function getStyle() {
     --tab-text: var(--tab-text-regular);
   }
 
-  /* Keep sound playing indicator clickable */
-  tab-item.sound-playing ::part(%EXTRA_CONTENTS_PART% container),
-  tab-item.has-sound-playing-member ::part(%EXTRA_CONTENTS_PART% container),
-  tab-item.muted ::part(%EXTRA_CONTENTS_PART% container),
-  tab-item.has-muted-member ::part(%EXTRA_CONTENTS_PART% container) {
-    right: var(--svg-small-icon-size);
-  }
-
   :root:not(.active) ::part(%EXTRA_CONTENTS_PART% container) {
     background: var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace)));
   }
