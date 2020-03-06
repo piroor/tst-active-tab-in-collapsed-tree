@@ -30,6 +30,9 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     --tab-surface: var(--tab-surface-regular);
     --tab-text: var(--tab-text-regular);
   }
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% container) {
+    background: var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace)));
+  }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
     border-left: var(--tab-highlighter-size) solid transparent;
@@ -59,9 +62,15 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     border-left-color: var(--tab-highlighter);
     text-shadow: var(--tab-text-shadow);
   }
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active) {
+    --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active));
+  }
   ::part(%EXTRA_CONTENTS_PART% tab active):hover {
     --tab-surface: var(--tab-surface-active-hover);
     border-left-color: var(--tab-highlighter);
+  }
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active):hover {
+    --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active-hover));
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon) {
