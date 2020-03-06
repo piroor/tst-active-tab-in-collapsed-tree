@@ -22,6 +22,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     bottom: 0;
     left: 0;
     line-height: 1;
+    mask-image: linear-gradient(to left, transparent 0, black 2em);
     position: absolute;
     right: 0;
 
