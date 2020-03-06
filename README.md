@@ -5,3 +5,5 @@
 Provides UI to show last active tab in a collapsed tree, in Tree Style Tab's sidebar.
 
 This depends on [Tab Extra Contents API](https://github.com/piroor/treestyletab/wiki/Tab-Extra-Contents-API) introduced at TST 3.4.0.
+
+Installable package is available at https://addons.mozilla.org/firefox/addon/tst-active-tab-in-collapsed-tr/
