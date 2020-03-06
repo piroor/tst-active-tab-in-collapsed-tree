@@ -26,6 +26,7 @@ function getStyle() {
     left: 0;
     line-height: 1;
     mask-image: linear-gradient(to left, transparent 0, black 2em);
+    overflow: hidden;
     position: absolute;
     right: 0;
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 2px);
