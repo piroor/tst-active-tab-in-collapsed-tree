@@ -2,6 +2,9 @@
   "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
   "extensionDescription": { "message": "Tree Style Tabに対し、折りたたまれたツリー内で最後にアクティブだったタブを表示するUIを提供します。" },
 
+  "config_heightPercentage_label_before": { "message": "最後にアクティブだったタブを" },
+  "config_heightPercentage_label_after":  { "message": "%の高さで表示する" },
+
   "config_onAction_caption":    { "message": "折りたたまれたツリーで最後にアクティブだったタブに対する操作" },
   "config_onAction_focus":      { "message": "タブを選択する" },
   "config_onAction_close":      { "message": "タブを閉じる" },

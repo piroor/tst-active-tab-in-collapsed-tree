@@ -8,6 +8,8 @@
 import Configs from '/extlib/Configs.js';
 
 export const configs = new Configs({
+  heightPercentage: 60,
+
   onClick:       'focus',
   onDblClick:    'expand',
   onMiddleClick: 'close',

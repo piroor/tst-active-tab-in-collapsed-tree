@@ -11,12 +11,15 @@ import {
 
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
-const STYLE_FOR_EXTRA_TAB_CONTENTS = `
+function getStyle() {
+  return `
   tab-item:not(.subtree-collapsed) ::part(%EXTRA_CONTENTS_PART% container) {
     visibility: collapse;
   }
 
   ::part(%EXTRA_CONTENTS_PART% container) {
+    --%EXTRA_CONTENTS_PART%-tab-size: calc(var(--tab-size) * ${Math.min(100, Math.max(1, configs.heightPercentage)) / 100});
+
     background: var(--tabbar-bg, var(--bg-color, ButtonFace));
     border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
     bottom: 0;
@@ -25,9 +28,10 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     mask-image: linear-gradient(to left, transparent 0, black 2em);
     position: absolute;
     right: 0;
+    top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 2px);
 
-    --throbber-size: 12px;
-    --favicon-size: 12px;
+    --contents-size: calc(var(--%EXTRA_CONTENTS_PART%-tab-size) - 0.4em);
+    --throbber-size: var(--contents-size);
     --tab-surface: var(--tab-surface-regular);
     --tab-text: var(--tab-text-regular);
   }
@@ -53,6 +57,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
 
   ::part(%EXTRA_CONTENTS_PART% title) {
     overflow: hidden;
+    padding: calc((var(--contents-size) - 1em) / 2) 0;
     text-overflow: ".."; /*ellipsis*/;
     white-space: pre;
   }
@@ -75,11 +80,13 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon) {
-    height: var(--favicon-size);
+    height: var(--contents-size);
+    padding-bottom: calc((var(--contents-size) - var(--favicon-size)) / 2);
     margin-right: 0.25em;
+    padding-top: calc((var(--contents-size) - var(--favicon-size)) / 2);
     max-height: var(--favicon-size);
     max-width: var(--favicon-size);
-    width: var(--favicon-size);
+    width: var(--contents-size);
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon sanitized) {
@@ -147,6 +154,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
     mask: url("/sidebar/styles/throbber.svg") no-repeat left center / 100%;
   }
 `;
+}
 
 const THROBBER_ANIMATION = `
   @keyframes throbber {
@@ -178,7 +186,7 @@ async function registerToTST() {
         'tree-detached',
         'tree-collapsed-state-changed'
       ],
-      style: STYLE_FOR_EXTRA_TAB_CONTENTS
+      style: getStyle()
     });
     updateAllTabs();
   }
@@ -186,7 +194,15 @@ async function registerToTST() {
     // TST is not available
   }
 }
-registerToTST();
+configs.$loaded.then(registerToTST);
+
+configs.$addObserver(key => {
+  switch (key) {
+    case 'heightPercentage':
+      registerToTST();
+      return;
+  }
+});
 
 let lastExpandingTreeClearTimer;
 
