@@ -18,7 +18,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
 
   ::part(%EXTRA_CONTENTS_PART% container) {
     background: var(--tabbar-bg, var(--bg-color, ButtonFace));
-    border: 1px solid var(--tab-border, var(--throbber-shadow-color));
+    border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
     bottom: 0;
     left: 0;
     line-height: 1;
@@ -47,7 +47,7 @@ const STYLE_FOR_EXTRA_TAB_CONTENTS = `
   }
   ::part(%EXTRA_CONTENTS_PART% tab):hover {
     --tab-surface: var(--tab-surface-hover);
-    border-left-color: var(--tab-highlighter-inactive, var(--throbber-shadow-color));
+    border-left-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
   }
 
   ::part(%EXTRA_CONTENTS_PART% title) {
