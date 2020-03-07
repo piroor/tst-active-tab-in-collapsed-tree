@@ -487,18 +487,18 @@ function buildContentsForTab(tab) {
   const highlighted = !tab.active && tab.highlighted ? 'highlighted' : '';
 
   const icon = [
-    `<span anonid="throbber"
+    `<span id="throbber"
            part="throbber ${tab.status}"
            ><span part="throbber-image ${active}"></span></span>`,
-    `<img anonid="favicon"
+    `<img id="favicon"
           part="favicon ${tab.status}"
           src="${tab.favIconUrl}">`
   ].join('');
-  const label = `<span anonid="label"
+  const label = `<span id="tab"
                        part="title ${active}"
                        title="${sanitzeForHTML(tab.title)}"
                        >${sanitzeForHTML(tab.title)}</span>`;
-  const highlighter = `<span anonid="highlighter"
+  const highlighter = `<span id="highlighter"
                              part="multiselected-highlighter ${highlighted}"></span>`;
 
   const regularActionDragData = {
@@ -527,7 +527,7 @@ function buildContentsForTab(tab) {
     'Ctrl+Shift':    shiftedActionDragData,
     'MacCtrl+Shift': shiftedActionDragData
   };
-  return `<span anonid="tab"
+  return `<span id="tab"
                 part="tab ${active}"
                 draggable="true"
                 data-drag-data="${sanitzeForHTML(JSON.stringify(dragData))}"
