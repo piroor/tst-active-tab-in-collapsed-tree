@@ -401,7 +401,13 @@ function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
 }
 reserveToUpdateTab.reserved = new Map();
 
-async function updateTab(tabId, lastActiveTab = null, { initializing = false, clear = false, update = false } = {}) {
+async function updateTab(
+  tabId,
+  lastActiveTab = null,
+  { initializing = false,
+    clear = false,
+    update = false } = {}
+) {
   const [nativeTab, tree] = await Promise.all([
     browser.tabs.get(tabId),
     browser.runtime.sendMessage(TST_ID, {
