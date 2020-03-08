@@ -166,7 +166,8 @@ const THROBBER_ANIMATION = `
 `;
 
 const contentsForTab = new Map();
-const lastActiveForTab = new Map();
+const activeTabInTree = new Map();
+const lastActiveTabInTree = new Map();
 const parentForTab = new Map();
 let lastExpandingTree;
 
@@ -181,6 +182,7 @@ async function registerToTST() {
         'try-expand-tree-from-focused-collapsed-tab',
         'try-expand-tree-from-focused-parent',
         'try-move-focus-from-collapsing-tree',
+        'try-redirect-focus-from-collaped-tab',
         'tab-mousedown',
         'tab-clicked',
         'tab-dblclicked',
@@ -221,7 +223,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           break;
 
         case 'try-expand-tree-from-focused-parent':
-          //if (!lastActiveForTab.get(message.tab.id))
+          //if (!activeTabInTree.get(message.tab.id))
           //  return;
           lastExpandingTree = message.tab.id;
           return;
@@ -229,6 +231,18 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
         case 'try-expand-tree-from-focused-collapsed-tab':
         case 'try-move-focus-from-collapsing-tree':
           return Promise.resolve(true);
+
+        case 'try-redirect-focus-from-collaped-tab':
+          return browser.runtime.sendMessage(TST_ID, {
+            type: 'get-tree',
+            tabs: message.tab.ancestorTabIds
+          }).then(ancestors => {
+            return ancestors.some(tab =>
+              // We must see lastActiveTabInTree to refer the last state
+              // before updated on tabs.onActivated.
+              lastActiveTabInTree.get(tab.id) == message.tab.id &&
+              !tab.states.includes('collapsed'));
+          });
 
         case 'tab-mousedown':
           if (message.button != 0 ||
@@ -241,7 +255,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
               message.shiftKey)
             return;
           if (message.originalTarget) {
-            const lastActive = lastActiveForTab.get(message.tab.id);
+            const lastActive = activeTabInTree.get(message.tab.id);
             if (lastActive)
               return Promise.resolve(doActionFor(lastActive, configs.onClick));
           }
@@ -255,7 +269,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
         case 'tab-clicked':
           if (message.button == 1 &&
               message.originalTarget) {
-            const lastActive = lastActiveForTab.get(message.tab.id);
+            const lastActive = activeTabInTree.get(message.tab.id);
             if (lastActive)
               return Promise.resolve(doActionFor(lastActive, configs.onMiddleClick));
           }
@@ -272,7 +286,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
               message.shiftKey)
             return;
           if (message.originalTarget) {
-            const lastActive = lastActiveForTab.get(message.tab.id);
+            const lastActive = activeTabInTree.get(message.tab.id);
             if (lastActive)
               return Promise.resolve(doActionFor(lastActive, configs.onDblClick));
           }
@@ -284,12 +298,12 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           break;
 
         case 'tree-detached':
-          if (lastActiveForTab.get(message.oldParent.id) == message.tab.id)
+          if (activeTabInTree.get(message.oldParent.id) == message.tab.id)
             reserveToUpdateTab(message.oldParent.id, null, { clear: true });
           break;
 
         case 'tree-collapsed-state-changed': {
-          const lastActiveId = lastActiveForTab.get(message.tab.id);
+          const lastActiveId = activeTabInTree.get(message.tab.id);
           if (lastActiveId &&
               message.collapsed)
             browser.runtime.sendMessage(TST_ID, {
@@ -309,7 +323,12 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
     default:
       switch (message.type) {
         case 'will-cancel-expansion-from-focused-collapsed-tab':
-          return Promise.resolve(true);
+          return Promise.resolve(message.ancestorTabIds.some(id =>
+            // We must see lastActiveTabInTree to refer the last state
+            // before updated on tabs.onActivated.
+            activeTabInTree.get(id) == message.tabId ||
+            lastActiveTabInTree.get(id) == message.tabId
+          ));
       }
       break;
   }
@@ -318,7 +337,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 browser.tabs.onRemoved.addListener(async tabId => {
   const parentId = parentForTab.get(tabId);
   if (parentId) {
-    const lastActiveId = lastActiveForTab.get(parentId);
+    const lastActiveId = activeTabInTree.get(parentId);
     if (lastActiveId) {
       const tab = await browser.runtime.sendMessage(TST_ID, {
         type: 'get-tree',
@@ -326,19 +345,27 @@ browser.tabs.onRemoved.addListener(async tabId => {
       });
       if (tab) {
         for (const ancestorId of [parentId].concat(tab.ancestorTabIds)) {
-          const lastActiveId = lastActiveForTab.get(ancestorId);
+          const lastActiveId = activeTabInTree.get(ancestorId);
           if (lastActiveId != tabId)
             continue;
           // Clear these information immediately to prevent updating by tree-detached.
           contentsForTab.delete(ancestorId);
-          lastActiveForTab.delete(ancestorId);
+          activeTabInTree.delete(ancestorId);
+          setTimeout(() => {
+            if (!activeTabInTree.has(ancestorId))
+              lastActiveTabInTree.delete(ancestorId);
+          }, 0);
           reserveToUpdateTab(ancestorId, null, { clear: true });
         }
       }
     }
   }
   contentsForTab.delete(tabId);
-  lastActiveForTab.delete(tabId);
+  activeTabInTree.delete(tabId);
+  setTimeout(() => {
+    if (!activeTabInTree.has(tabId))
+      lastActiveTabInTree.delete(tabId);
+  }, 0);
   parentForTab.delete(tabId);
 });
 
@@ -347,6 +374,18 @@ browser.tabs.onActivated.addListener(async activeInfo => {
     type: 'get-tree',
     tabs: [activeInfo.tabId, activeInfo.previousTabId]
   });
+
+  const ancestors = await browser.runtime.sendMessage(TST_ID, {
+    type: 'get-tree',
+    tabs: tab.ancestorTabIds
+  });
+  const wasFocusableLastActiveInTree = ancestors.some(ancestor =>
+    activeTabInTree.get(ancestor.id) == tab.id &&
+    !tab.states.includes('collapsed')
+  );
+  if (!wasFocusableLastActiveInTree)
+    return;
+
   if (previousTab.states.includes('collapsed') ||
       !previousTab.states.includes('subtree-collapsed'))
     reserveToUpdateTab(activeInfo.previousTabId);
@@ -443,7 +482,7 @@ async function updateTab(
   let lastAncestor = null;
   for (const ancestorId of tab.ancestorTabIds) {
     if (!update ||
-        lastActiveForTab.get(ancestorId) == lastActiveTab.id)
+        activeTabInTree.get(ancestorId) == lastActiveTab.id)
       reserveToSetContents(ancestorId, lastActiveTab.id, contents);
     if (lastAncestor)
       parentForTab.set(lastAncestor, ancestorId);
@@ -459,12 +498,19 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
     reserveToSetContents.reserved.delete(tabId);
     if (lastActiveTabId && contents) {
       contentsForTab.set(tabId, contents);
-      lastActiveForTab.set(tabId, lastActiveTabId);
+      activeTabInTree.set(tabId, lastActiveTabId);
+      setTimeout(() => {
+        lastActiveTabInTree.set(tabId, activeTabInTree.get(tabId));
+      }, 0);
       browser.sessions.setTabValue(tabId, 'lastActiveTabId', lastActiveTabId);
     }
     else {
       contentsForTab.delete(tabId);
-      lastActiveForTab.delete(tabId);
+      activeTabInTree.delete(tabId);
+      setTimeout(() => {
+        if (!activeTabInTree.has(tabId))
+          lastActiveTabInTree.delete(tabId);
+      }, 0);
       browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
     }
     setContents(tabId);
