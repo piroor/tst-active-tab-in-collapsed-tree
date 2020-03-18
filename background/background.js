@@ -548,8 +548,8 @@ function buildContentsForTab(tab) {
   ].join('');
   const label = `<span id="tab"
                        part="title ${active}"
-                       title="${sanitzeForHTML(tab.title)}"
-                       >${sanitzeForHTML(tab.title)}</span>`;
+                       title="${sanitizeForHTML(tab.title)}"
+                       >${sanitizeForHTML(tab.title)}</span>`;
   const highlighter = `<span id="highlighter"
                              part="multiselected-highlighter ${highlighted}"></span>`;
 
@@ -582,12 +582,12 @@ function buildContentsForTab(tab) {
   return `<span id="tab"
                 part="tab ${active}"
                 draggable="true"
-                data-drag-data="${sanitzeForHTML(JSON.stringify(dragData))}"
+                data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
                 data-tab-id="${tab.id}"
                 >${icon}${label}${highlighter}</span>`;
 }
 
-function sanitzeForHTML(string) {
+function sanitizeForHTML(string) {
   return string.replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
