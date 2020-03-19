@@ -345,8 +345,10 @@ browser.tabs.onRemoved.addListener(async tabId => {
       });
       if (tab) {
         for (const ancestorId of [parentId].concat(tab.ancestorTabIds)) {
-          const lastActiveId = activeTabInTree.get(ancestorId);
-          if (lastActiveId != tabId)
+          const activeId     = activeTabInTree.get(ancestorId);
+          const lastActiveId = lastActiveTabInTree.get(ancestorId);
+          if (activeId != tabId &&
+              lastActiveId != tabId)
             continue;
           // Clear these information immediately to prevent updating by tree-detached.
           contentsForTab.delete(ancestorId);
@@ -380,15 +382,14 @@ browser.tabs.onActivated.addListener(async activeInfo => {
     tabs: tab.ancestorTabIds
   });
   const wasFocusableLastActiveInTree = ancestors.some(ancestor =>
-    activeTabInTree.get(ancestor.id) == tab.id &&
-    !tab.states.includes('collapsed')
-  );
-  if (!wasFocusableLastActiveInTree)
-    return;
-
-  if (previousTab.states.includes('collapsed') ||
-      !previousTab.states.includes('subtree-collapsed'))
+    activeTabInTree.get(ancestor.id) == tab.id
+  ) && !tab.states.includes('collapsed');
+  if (wasFocusableLastActiveInTree &&
+      previousTab &&
+      (previousTab.states.includes('collapsed') ||
+       !previousTab.states.includes('subtree-collapsed'))) {
     reserveToUpdateTab(activeInfo.previousTabId);
+  }
 
   reserveToUpdateTab(activeInfo.tabId);
   if (tab.states.includes('collapsed'))
@@ -481,8 +482,9 @@ async function updateTab(
   const contents = !clear && lastActiveTab && buildContentsForTab(lastActiveTab);
   let lastAncestor = null;
   for (const ancestorId of tab.ancestorTabIds) {
-    if (!update ||
-        activeTabInTree.get(ancestorId) == lastActiveTab.id)
+    if (lastActiveTab &&
+        (!update ||
+         activeTabInTree.get(ancestorId) == lastActiveTab.id))
       reserveToSetContents(ancestorId, lastActiveTab.id, contents);
     if (lastAncestor)
       parentForTab.set(lastAncestor, ancestorId);
