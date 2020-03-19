@@ -529,7 +529,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
         lastActiveTabInTree.set(tabId, activeTabInTree.get(tabId));
       }, 0);
       browser.sessions.setTabValue(tabId, 'lastActiveTabId', lastActiveTabId);
-      console.log(`Set ${lastActiveTabId} as the last active tab of ${tabId}`);
+      log(`Set ${lastActiveTabId} as the last active tab of ${tabId}`);
     }
     else {
       contentsForTab.delete(tabId);
@@ -539,7 +539,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
           lastActiveTabInTree.delete(tabId);
       }, 0);
       browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
-      console.log(`Unset last active tab of ${tabId}`);
+      log(`Unset last active tab of ${tabId}`);
     }
     setContents(tabId);
   }, 0));
