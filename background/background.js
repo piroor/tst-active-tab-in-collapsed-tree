@@ -11,6 +11,11 @@ import {
 
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
+function log(...messages) {
+  if (configs.debug)
+    console.log(...messages);
+}
+
 function getStyle() {
   return `
   tab-item:not(.subtree-collapsed) ::part(%EXTRA_CONTENTS_PART% container) {
@@ -293,13 +298,17 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           break;
 
         case 'tree-attached':
-          if (message.tab.active)
+          if (message.tab.active) {
+            log(`Update for newly attached active tab ${message.tab.id}`);
             reserveToUpdateTab(message.tab.id);
+          }
           break;
 
         case 'tree-detached':
-          if (activeTabInTree.get(message.oldParent.id) == message.tab.id)
+          if (activeTabInTree.get(message.oldParent.id) == message.tab.id) {
+            log(`Update for detached tab ${message.tab.id}, from ${message.oldParent.id}`);
             reserveToUpdateTab(message.oldParent.id, null, { clear: true });
+          }
           break;
 
         case 'tree-collapsed-state-changed': {
@@ -357,6 +366,7 @@ browser.tabs.onRemoved.addListener(async tabId => {
             if (!activeTabInTree.has(ancestorId))
               lastActiveTabInTree.delete(ancestorId);
           }, 0);
+          log(`Update for removed tab ${tabId}, ancestor = ${ancestorId}`);
           reserveToUpdateTab(ancestorId, null, { clear: true });
         }
       }
@@ -388,15 +398,18 @@ browser.tabs.onActivated.addListener(async activeInfo => {
       previousTab &&
       (previousTab.states.includes('collapsed') ||
        !previousTab.states.includes('subtree-collapsed'))) {
+    log(`Update for previous active tab ${activeInfo.previousTabId}`);
     reserveToUpdateTab(activeInfo.previousTabId);
   }
 
+  log(`Update for new active tab ${activeInfo.tabId}`);
   reserveToUpdateTab(activeInfo.tabId);
   if (tab.states.includes('collapsed'))
     tryUpdateSuccessorTabFor(tab);
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, _changeInfo, tab) => {
+  log(`Update for updated tab ${tabId}`);
   reserveToUpdateTab(tabId, tab, { update: true });
 }, { properties: ['title', 'favIconUrl', 'status'] });
 
@@ -414,12 +427,16 @@ browser.tabs.onHighlighted.addListener(highlightInfo => {
     const oldHighlighted = highlightedTabsInWindow.get(highlightInfo.windowId) || new Set();
     const newHighlighted = new Set(highlightInfo.tabIds);
     for (const id of oldHighlighted) {
-      if (!newHighlighted.has(id))
+      if (!newHighlighted.has(id)) {
+        log(`Update for unhighlighted tab ${id}`);
         browser.tabs.get(id).then(tab => reserveToUpdateTab(id, tab, { update: true }));
+      }
     }
     for (const id of newHighlighted) {
-      if (!oldHighlighted.has(id))
+      if (!oldHighlighted.has(id)) {
+        log(`Update for highlighted tab ${id}`);
         browser.tabs.get(id).then(tab => reserveToUpdateTab(id, tab, { update: true }));
+      }
     }
     highlightedTabsInWindow.set(highlightInfo.windowId, newHighlighted);
   }, 150));
@@ -461,6 +478,13 @@ async function updateTab(
   const tab = Object.assign(nativeTab, tree);
   if (!lastActiveTab)
     lastActiveTab = tab;
+
+  log(`<updateTab ${tabId}>`, {
+    lastActiveTab: lastActiveTab && lastActiveTab.id,
+    update,
+    clear,
+    children: tab.children.length
+  });
 
   // Clear last active descendant when a parent tab
   // itself gets focused while it is completely expanded.
@@ -505,6 +529,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
         lastActiveTabInTree.set(tabId, activeTabInTree.get(tabId));
       }, 0);
       browser.sessions.setTabValue(tabId, 'lastActiveTabId', lastActiveTabId);
+      console.log(`Set ${lastActiveTabId} as the last active tab of ${tabId}`);
     }
     else {
       contentsForTab.delete(tabId);
@@ -514,6 +539,7 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
           lastActiveTabInTree.delete(tabId);
       }, 0);
       browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
+      console.log(`Unset last active tab of ${tabId}`);
     }
     setContents(tabId);
   }, 0));

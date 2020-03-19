@@ -15,8 +15,11 @@ export const configs = new Configs({
   onMiddleClick: 'close',
 
   tabDragBehavior:      'tree,detach',
-  tabDragBehaviorShift: 'tree,link'
+  tabDragBehaviorShift: 'tree,link',
+
+  debug: false
 }, {
   localKeys: [
+    'debug'
   ]
 });
