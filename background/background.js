@@ -466,11 +466,11 @@ async function updateTab(
     update = false } = {}
 ) {
   const [nativeTab, tree] = await Promise.all([
-    browser.tabs.get(tabId).catch(error => null),
+    browser.tabs.get(tabId).catch(_error => null),
     browser.runtime.sendMessage(TST_ID, {
       type: 'get-tree',
       tab:  tabId
-    }).catch(error => null)
+    }).catch(_error => null)
   ]);
   if (!nativeTab)
     return;
