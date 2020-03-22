@@ -4,7 +4,7 @@
         "hash": "a39fad03b02538ebb16d097cb5197d37"
     },
     "extensionDescription": {
-        "message": "提供了 UI（界面接口）来显示位于 树状标签页 中折叠标签树下的上次活动标签页。",
+        "message": "提供了 UI（界面接口）来显示位于 Tree Style Tab 中折叠标签树下的上次活动标签页。",
         "hash": "a8096f9ecbb28a22e3158e69946274c5"
     },
     "config_heightPercentage_label_before": {
@@ -52,7 +52,7 @@
         "hash": "5a6aa1a824cdb8486c3ad323b73a3a00"
     },
     "config_tabDragBehavior_description": {
-        "message": "由于 Firefox 的限制，您必须在开始拖动时决定：标签页在被拖放到 树状标签页 侧栏之外时会被如何处理。",
+        "message": "由于 Firefox 的限制，您必须在开始拖动时决定：标签页在被拖放到 TST 侧栏之外时会被如何处理。",
         "hash": "c8eeed9c164f7d0bc624bfa57a3bc51c"
     },
     "config_tabDragBehavior_label": {
