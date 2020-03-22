@@ -1,40 +1,91 @@
 {
-  "config_onAction_none":       { "message": "什么都不做" },
-
+    "extensionName": {
+        "message": "TST Active Tab in Collapsed Tree - TST 折叠标签树中的活动标签页",
+        "hash": "a39fad03b02538ebb16d097cb5197d37"
+    },
+    "extensionDescription": {
+        "message": "提供了 UI（界面接口）来显示位于 树状标签页 中折叠标签树下的上次活动标签页。",
+        "hash": "a8096f9ecbb28a22e3158e69946274c5"
+    },
+    "config_heightPercentage_label_before": {
+        "message": "显示上次活动标签页，占用",
+        "hash": "fbbab431bddda56a31a318998628b908"
+    },
+    "config_heightPercentage_label_after": {
+        "message": "% 的正常标签页高度",
+        "hash": "d6e11f7fbf5b1317e4e5631c2e73218e"
+    },
+    "config_onAction_caption": {
+        "message": "对折叠标签树中的上次活动标签页进行的动作",
+        "hash": "fd06941c754a76cb9b78f8132757617d"
+    },
+    "config_onAction_focus": {
+        "message": "聚焦到该标签页",
+        "hash": "1fd16b5991d34916f93d7fec522fda6b"
+    },
+    "config_onAction_close": {
+        "message": "关闭该标签页",
+        "hash": "30ea53a43ca73d0ad7494c25addd2eed"
+    },
+    "config_onAction_expand": {
+        "message": "展开该标签树",
+        "hash": "15bbf7729fbf234a9c34089dd4a50941"
+    },
+    "config_onAction_none": {
+        "message": "什么都不做",
+        "hash": "a0a28b9a09a44d3e69599b6500e47a0e"
+    },
+    "config_onClick_label": {
+        "message": "正常点击",
+        "hash": "598e77d1af9f5ae6ef82c9062d96ffe8"
+    },
+    "config_onMiddleClick_label": {
+        "message": "中键点击",
+        "hash": "213b89f090ecf95eafb180c8cc0d073e"
+    },
+    "config_onDblClick_label": {
+        "message": "双击",
+        "hash": "a6947a2b66aed126eb7007f137546b99"
+    },
     "config_tabDragBehavior_caption": {
-        "message": "当一个树被拖拽到侧栏外部时",
-        "hash": "ddfedf8c4a80cb4e12568d1ec110d269"
+        "message": "当一个标签树被拖放到侧边标签栏之外时",
+        "hash": "5a6aa1a824cdb8486c3ad323b73a3a00"
     },
     "config_tabDragBehavior_description": {
-        "message": "因为 Firefox 的限制，你必须在开始拖拽时决定：标签页在树形标签页侧栏以外释放时被当作什么。"
+        "message": "由于 Firefox 的限制，您必须在开始拖动时决定：标签页在被拖放到 树状标签页 侧栏之外时会被如何处理。",
+        "hash": "c8eeed9c164f7d0bc624bfa57a3bc51c"
     },
     "config_tabDragBehavior_label": {
-        "message": "拖拽",
-        "hash": "6957fbb9cf5b17c85214d3065e5d9fb3"
+        "message": "拖动",
+        "hash": "691dea276ee74670a1d99f7b008d80ea"
     },
     "config_tabDragBehaviorShift_label": {
-        "message": "按住 Shift 拖拽",
-        "hash": "c26c7dbae02a5f950080f2e84b543a51"
+        "message": "按住 Shift 进行拖动",
+        "hash": "bbe432a46b307bcc31ee7a4f0f667c46"
     },
     "config_tabDragBehavior_tearoff_tree": {
-        "message": "从窗口剥离整颗树（但无法创建书签）",
+        "message": "从窗口分离整个标签树（但不会为其创建书签）",
         "hash": "4723ca0b18c76b5e9b4a8000d8ac2292"
     },
     "config_tabDragBehavior_bookmark_tree": {
-        "message": "为整颗树创建书签（但无法从窗口剥离）",
+        "message": "为整个标签树创建链接或者书签（但不会将其从窗口分离）",
         "hash": "356fc53a67e8318e0226f69d53783d6f"
     },
     "config_tabDragBehavior_tearoff_tab": {
-        "message": "从窗口剥离单一标签页（但无法创建书签）",
+        "message": "从窗口分离单个标签页（但不会为其创建书签）",
         "hash": "024c0183bb540674a551b18d646d4ef5"
     },
     "config_tabDragBehavior_bookmark_tab": {
-        "message": "为单一标签页创建书签（但无法从窗口剥离）",
+        "message": "为单个标签页创建链接或者书签（但不会将其从窗口分离）",
         "hash": "222b9f01d390b68db03215b3766565a4"
     },
     "config_tabDragBehavior_none": {
         "message": "什么都不做",
         "hash": "a0a28b9a09a44d3e69599b6500e47a0e"
+    },
+    "config_debug_label": {
+        "message": "输出调试日志",
+        "hash": "e52463c8dd7b4ed88697ab2f9aa65ee6"
     },
 
     "__WET_LOCALE__": { "message": "zh-CN" }
