@@ -4,19 +4,19 @@
         "hash": "a39fad03b02538ebb16d097cb5197d37"
     },
     "extensionDescription": {
-        "message": "提供了 UI（界面接口）来显示位于 Tree Style Tab 中折叠标签树下的上次活动标签页。",
-        "hash": "a8096f9ecbb28a22e3158e69946274c5"
+        "message": "在 Tree Style Tab 中的折叠标签树上显示上次活动标签页。",
+        "hash": "e3c78e55b04f70e592711eed0d07923f"
     },
     "config_heightPercentage_label_before": {
-        "message": "显示上次活动标签页，占用",
+        "message": "在父标签页上占用其",
         "hash": "fbbab431bddda56a31a318998628b908"
     },
     "config_heightPercentage_label_after": {
-        "message": "% 的正常标签页高度",
-        "hash": "d6e11f7fbf5b1317e4e5631c2e73218e"
+        "message": "% 的高度来显示其中的上次活动标签页。",
+        "hash": "6fd843e96dbc8b7f72a0004118594248"
     },
     "config_onAction_caption": {
-        "message": "对折叠标签树中的上次活动标签页进行的动作",
+        "message": "对折叠标签树中的上次活动标签页所进行的动作",
         "hash": "fd06941c754a76cb9b78f8132757617d"
     },
     "config_onAction_focus": {
@@ -32,8 +32,12 @@
         "hash": "15bbf7729fbf234a9c34089dd4a50941"
     },
     "config_onAction_none": {
-        "message": "什么都不做",
-        "hash": "a0a28b9a09a44d3e69599b6500e47a0e"
+        "message": "什么特殊行为都不做，尊重 TST 的默认行为",
+        "hash": "e8690879cbb2d65e82fe0a2a2869cca8"
+    },
+    "config_onAction_cancel": {
+        "message": "什么都不做，同时取消 TST 的默认行为",
+        "hash": "f599fe0962143aaaf2fe51809ffe441c"
     },
     "config_onClick_label": {
         "message": "正常点击",
@@ -48,8 +52,8 @@
         "hash": "a6947a2b66aed126eb7007f137546b99"
     },
     "config_tabDragBehavior_caption": {
-        "message": "当一个标签树被拖放到侧边标签栏之外时",
-        "hash": "5a6aa1a824cdb8486c3ad323b73a3a00"
+        "message": "当一个上次活动标签页的指示器被拖放时",
+        "hash": "37a492be115afcaf4f88f11ab6d2d08a"
     },
     "config_tabDragBehavior_description": {
         "message": "由于 Firefox 的限制，您必须在开始拖动时决定：标签页在被拖放到 TST 侧栏之外时会被如何处理。",
@@ -63,25 +67,29 @@
         "message": "按住 Shift 进行拖动",
         "hash": "bbe432a46b307bcc31ee7a4f0f667c46"
     },
+    "config_tabDragBehavior_label_behavior": {
+        "message": "在侧栏 之内 / 之外 的行为",
+        "hash": "59f0069d2cad894d52c8ac1b30aee2ca"
+    },
     "config_tabDragBehavior_tearoff_tree": {
-        "message": "从窗口分离整个标签树（但不会为其创建书签）",
-        "hash": "4723ca0b18c76b5e9b4a8000d8ac2292"
+        "message": "移动整个标签树 / 从窗口分离整个标签树（但不会为其创建书签）",
+        "hash": "22e37c5af01d15eac6612b4a1defc4bd"
     },
     "config_tabDragBehavior_bookmark_tree": {
-        "message": "为整个标签树创建链接或者书签（但不会将其从窗口分离）",
-        "hash": "356fc53a67e8318e0226f69d53783d6f"
+        "message": "移动整个标签树 / 为整个标签树创建链接或者书签（但不会将其从窗口分离）",
+        "hash": "0b9924753511cc71dc499f5f40a6e927"
     },
     "config_tabDragBehavior_tearoff_tab": {
-        "message": "从窗口分离单个标签页（但不会为其创建书签）",
-        "hash": "024c0183bb540674a551b18d646d4ef5"
+        "message": "移动单个标签页 / 从窗口分离单个标签页（但不会为其创建书签）",
+        "hash": "bfd07549cea04e48abb877763c6d6a4a"
     },
     "config_tabDragBehavior_bookmark_tab": {
-        "message": "为单个标签页创建链接或者书签（但不会将其从窗口分离）",
-        "hash": "222b9f01d390b68db03215b3766565a4"
+        "message": "移动单个标签页 / 为单个标签页创建链接或者书签（但不会将其从窗口分离）",
+        "hash": "f3592b9c978a8c82911ec0d008d3b870"
     },
     "config_tabDragBehavior_none": {
-        "message": "什么都不做",
-        "hash": "a0a28b9a09a44d3e69599b6500e47a0e"
+        "message": "什么特殊行为都不做，尊重 TST 的默认行为",
+        "hash": "e8690879cbb2d65e82fe0a2a2869cca8"
     },
     "config_debug_label": {
         "message": "输出调试日志",
