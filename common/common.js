@@ -12,7 +12,7 @@ export const configs = new Configs({
 
   onClick:       'focus',
   onDblClick:    'expand',
-  onMiddleClick: 'close',
+  onMiddleClick: '',
 
   tabDragBehavior:      'tree,detach',
   tabDragBehaviorShift: 'tree,link',

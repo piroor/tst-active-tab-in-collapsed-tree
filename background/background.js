@@ -483,7 +483,11 @@ async function updateTab(
     lastActiveTab: lastActiveTab && lastActiveTab.id,
     update,
     clear,
-    children: tab.children.length
+    initializing,
+    children: tab.children.length,
+    notLastExpandingTree: tabId != lastExpandingTree,
+    collapsed: tab.states.includes('collapsed'),
+    subtreeCollapsed: tab.states.includes('subtree-collapsed')
   });
 
   // Clear last active descendant when a parent tab
@@ -491,7 +495,8 @@ async function updateTab(
   if (clear ||
       initializing ||
       tab.children.length == 0 ||
-      (tabId != lastExpandingTree &&
+      (!update &&
+       tabId != lastExpandingTree &&
        (!tab.states.includes('collapsed') &&
         !tab.states.includes('subtree-collapsed'))))
     reserveToSetContents(tabId, null, null);
@@ -688,6 +693,9 @@ function doActionFor(tabId, action) {
 
     case 'expand':
       expandTreeFor(tabId);
+      return true;
+
+    case 'cancel':
       return true;
 
     default:

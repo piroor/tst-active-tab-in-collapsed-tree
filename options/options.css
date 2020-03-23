@@ -59,9 +59,13 @@ tbody tr {
 }
 
 
+thead th:nth-child(3),
+tbody th {
+  text-align: left;
+}
+
 tbody th {
   font-weight: normal;
-  text-align: left;
 }
 
 td {
