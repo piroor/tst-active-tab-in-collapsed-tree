@@ -695,6 +695,9 @@ function doActionFor(tabId, action) {
       expandTreeFor(tabId);
       return true;
 
+    case 'cancel':
+      return true;
+
     default:
       return false;
   }
