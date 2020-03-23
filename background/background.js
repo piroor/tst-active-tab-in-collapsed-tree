@@ -483,7 +483,11 @@ async function updateTab(
     lastActiveTab: lastActiveTab && lastActiveTab.id,
     update,
     clear,
-    children: tab.children.length
+    initializing,
+    children: tab.children.length,
+    notLastExpandingTree: tabId != lastExpandingTree,
+    collapsed: tab.states.includes('collapsed'),
+    subtreeCollapsed: tab.states.includes('subtree-collapsed')
   });
 
   // Clear last active descendant when a parent tab
