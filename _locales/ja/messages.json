@@ -19,7 +19,7 @@
   "config_tabDragBehavior_description":   { "message": "Firefoxの制限のため、タブバー外へのドロップ後にタブをどう取り扱うかは、ドラッグ操作開始時に決定する必要があります。" },
   "config_tabDragBehavior_label":         { "message": "通常のドラッグ" },
   "config_tabDragBehaviorShift_label":    { "message": "Shift-ドラッグ" },
-  "config_tabDragBehavior_label_behavior": { "message": "サイドバー内の動作/サイドバー外の動作" },
+  "config_tabDragBehavior_label_behavior": { "message": "サイドバー内の動作 / サイドバー外の動作" },
   "config_tabDragBehavior_tearoff_tree":  { "message": "ツリー全体を移動する / ツリー全体を別ウィンドウに切り離す（ブックマークの作成はできません）" },
   "config_tabDragBehavior_bookmark_tree": { "message": "ツリー全体を移動する / ツリー全体のタブからリンクかブックマークを作成する（別ウィンドウへの切り離しはできません）" },
   "config_tabDragBehavior_tearoff_tab":   { "message": "タブ単体を移動する / タブ単体を別ウィンドウに切り離す（ブックマークの作成はできません）" },
