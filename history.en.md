@@ -1,6 +1,11 @@
 # History
 
  - master/HEAD
+   * Never clear the last active tab information of a parent tab when the parent tab itself is just updated.
+   * Change the default behavior of a middle click on last active tabs: do nothing and respect TST's deafult behavior.
+   * Add a new choice to ignore and cancel your action completely on last active tabs.
+   * Better description for drag and drop behavior options.
+   * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!
  - 1.0.2 (2020.3.19)
    * Fix unstable behavior after the active tab was closed.
  - 1.0.1 (2020.3.9)
