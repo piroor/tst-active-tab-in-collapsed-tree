@@ -2,6 +2,8 @@
   "extensionName": { "message": "TST Active Tab in Collapsed Tree" },
   "extensionDescription": { "message": "Shows last active tab in a collapsed tree in Tree Style Tab." },
 
+  "closeboxTooltip": { "message": "Close last active tab" },
+
   "config_heightPercentage_label_before": { "message": "Show last active tab with " },
   "config_heightPercentage_label_after":  { "message": "% height on parent tabs" },
 

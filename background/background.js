@@ -117,7 +117,7 @@ function getStyle() {
     bottom: 0;
     left: 0;
     opacity: 0;
-    pointer-events: none;
+    pointer-events: none; /* this is required, otherwise "title" of tab label never be shown as a tooltip */
     position: absolute;
     right: 0;
     top: 0;
@@ -206,7 +206,7 @@ function getStyle() {
     background: var(--tab-text);
     mask: url("${base}/resources/close-16.svg") no-repeat left center / 100%;
     opacity: 0.8;
-    pointer-events: none;
+    pointer-events: none; /* this is required, otherwise closebox-bg never become :hover */
     position: absolute;
     z-index: 6000;
   }
@@ -647,7 +647,17 @@ function buildContentsForTab(tab) {
                        >${sanitizeForHTML(tab.title)}</span>`;
   const highlighter = `<span id="highlighter"
                              part="multiselected-highlighter ${highlighted}"></span>`;
-  const closebox = configs.closebox ? `<span id="closebox" part="closebox closebox-container ${active}"><span id="closebox-bg" part="closebox closebox-bg"></span><span id="closebox-icon" part="closebox closebox-icon"></span></span>` : '';
+  const closebox = configs.closebox ? `
+    <span id="closebox"
+          part="closebox closebox-container ${active}"
+          title="${sanitizeForHTML(browser.i18n.getMessage('closeboxTooltip'))}"
+          ><span id="closebox-bg"
+                 part="closebox closebox-bg"
+                 title="${sanitizeForHTML(browser.i18n.getMessage('closeboxTooltip'))}"
+                 ></span
+           ><span id="closebox-icon"
+                  part="closebox closebox-icon"></span></span>
+  `.trim() : '';
 
   const regularActionDragData = {
     type: 'tab',
