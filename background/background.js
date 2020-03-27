@@ -60,7 +60,8 @@ function getStyle() {
     position: relative;
     transition: background 0.25s ease-out;
   }
-  ::part(%EXTRA_CONTENTS_PART% tab):hover {
+  ::part(%EXTRA_CONTENTS_PART% tab):hover,
+  ::part(%EXTRA_CONTENTS_PART% closebox-container):hover {
     --tab-surface: var(--tab-surface-hover);
     border-left-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
   }
@@ -72,20 +73,24 @@ function getStyle() {
     white-space: pre;
   }
 
-  ::part(%EXTRA_CONTENTS_PART% tab active) {
+  ::part(%EXTRA_CONTENTS_PART% tab active),
+  ::part(%EXTRA_CONTENTS_PART% closebox-container active) {
     --tab-surface: var(--tab-surface-active);
     --tab-text: var(--tab-text-active);
     border-left-color: var(--tab-highlighter);
     text-shadow: var(--tab-text-shadow);
   }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active) {
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active),
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active) {
     --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active));
   }
-  ::part(%EXTRA_CONTENTS_PART% tab active):hover {
+  ::part(%EXTRA_CONTENTS_PART% tab active):hover,
+  ::part(%EXTRA_CONTENTS_PART% closebox-container active):hover {
     --tab-surface: var(--tab-surface-active-hover);
     border-left-color: var(--tab-highlighter);
   }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active):hover {
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active):hover,
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active):hover {
     --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active-hover));
   }
 
@@ -168,45 +173,50 @@ function getStyle() {
   /* closebox */
 
   ::part(%EXTRA_CONTENTS_PART% closebox) {
-    bottom: calc((var(--%EXTRA_CONTENTS_PART%-tab-size) - var(--favicon-size)) / 2);
     display: inline-block;
-    font-size: calc(var(--favicon-size) * 0.9);
+    font-size: var(--favicon-size);
     height: var(--favicon-size);
     min-height: var(--favicon-size);
     min-width: var(--favicon-size);
     max-height: var(--favicon-size);
     max-width: var(--favicon-size);
+    width: var(--favicon-size);
+  }
+
+  ::part(%EXTRA_CONTENTS_PART% closebox-container) {
+    background: var(--tab-surface);
+    bottom: calc((var(--%EXTRA_CONTENTS_PART%-tab-size) - var(--favicon-size)) / 2);
+    box-shadow: 0 0 0.1em rgba(0, 0, 0, 0.3);
+    font-size: calc(var(--favicon-size) * 0.9);
     opacity: 0;
     position: absolute;
     right: 0;
     transition: background 0.15s ease-out,
                 box-shadow 0.15s ease-out,
                 opacity 0.15s ease-out;
-    width: calc(var(--favicon-size) + 0.2em);
     z-index: 5000;
+  }
+
+  ::part(%EXTRA_CONTENTS_PART% closebox-bg) {
+    position: absolute;
+    z-index: 5500;
   }
 
   ::part(%EXTRA_CONTENTS_PART% closebox-icon) {
     background: var(--tab-text);
-    display: inline-block;
-    font-size: var(--favicon-size);
-    height: var(--favicon-size);
-    min-height: var(--favicon-size);
-    min-width: var(--favicon-size);
     mask: url("${base}/resources/close-16.svg") no-repeat left center / 100%;
-    max-height: var(--favicon-size);
-    max-width: var(--favicon-size);
     opacity: 0.8;
-    width: var(--favicon-size);
+    pointer-events: none;
+    position: absolute;
+    z-index: 6000;
   }
 
-  tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox) {
+  tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox-container) {
     opacity: 1;
   }
 
-  tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox):hover {
+  tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox-bg):hover {
     background: var(--in-content-button-background);
-    box-shadow: 0 0 0.1em rgba(0, 0, 0, 0.3);
   }
 `;
 }
@@ -310,7 +320,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           if (message.originalTarget) {
             const lastActive = activeTabInTree.get(message.tab.id);
             if (lastActive) {
-              if (/^<[^>]+part="([^"]* )?closebox(-icon)?[^"]*"/.test(message.originalTarget))
+              if (/^<[^>]+part="([^"]* )?closebox(-(icon|bg))?[^"]*"/.test(message.originalTarget))
                 return Promise.resolve(doActionFor(lastActive, 'close'));
               return Promise.resolve(doActionFor(lastActive, configs.onClick));
             }
@@ -636,7 +646,7 @@ function buildContentsForTab(tab) {
                        >${sanitizeForHTML(tab.title)}</span>`;
   const highlighter = `<span id="highlighter"
                              part="multiselected-highlighter ${highlighted}"></span>`;
-  const closebox = `<span id="closebox" part="closebox"><span id="closebox-icon" part="closebox-icon"></span></span>`;
+  const closebox = `<span id="closebox" part="closebox closebox-container ${active}"><span id="closebox-bg" part="closebox closebox-bg"></span><span id="closebox-icon" part="closebox closebox-icon"></span></span>`;
 
   const regularActionDragData = {
     type: 'tab',
