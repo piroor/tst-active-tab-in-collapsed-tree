@@ -266,6 +266,7 @@ configs.$loaded.then(registerToTST);
 configs.$addObserver(key => {
   switch (key) {
     case 'heightPercentage':
+    case 'closebox':
       registerToTST();
       return;
   }
@@ -646,7 +647,7 @@ function buildContentsForTab(tab) {
                        >${sanitizeForHTML(tab.title)}</span>`;
   const highlighter = `<span id="highlighter"
                              part="multiselected-highlighter ${highlighted}"></span>`;
-  const closebox = `<span id="closebox" part="closebox closebox-container ${active}"><span id="closebox-bg" part="closebox closebox-bg"></span><span id="closebox-icon" part="closebox closebox-icon"></span></span>`;
+  const closebox = configs.closebox ? `<span id="closebox" part="closebox closebox-container ${active}"><span id="closebox-bg" part="closebox closebox-bg"></span><span id="closebox-icon" part="closebox closebox-icon"></span></span>` : '';
 
   const regularActionDragData = {
     type: 'tab',

@@ -5,6 +5,8 @@
   "config_heightPercentage_label_before": { "message": "Show last active tab with " },
   "config_heightPercentage_label_after":  { "message": "% height on parent tabs" },
 
+  "config_closebox_label":    { "message": "Show closebox for the last active tab" },
+
   "config_onAction_caption":    { "message": "Action on last active tab on a collapsed tree" },
   "config_onAction_focus":      { "message": "Focus to the tab" },
   "config_onAction_close":      { "message": "Close the tab" },

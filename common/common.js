@@ -9,6 +9,7 @@ import Configs from '/extlib/Configs.js';
 
 export const configs = new Configs({
   heightPercentage: 60,
+  closebox: true,
 
   onClick:       'focus',
   onDblClick:    'expand',
