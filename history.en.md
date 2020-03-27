@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 1.0.4 (2020.3.28)
+   * Add closebox for each last active tab.
+   * Show tooltip on each last active tab.
  - 1.0.3 (2020.3.24)
    * Never clear the last active tab information of a parent tab when the parent tab itself is just updated.
    * Change the default behavior of a middle click on last active tabs: do nothing and respect TST's deafult behavior.
