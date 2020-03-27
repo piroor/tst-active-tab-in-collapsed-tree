@@ -653,7 +653,6 @@ function buildContentsForTab(tab) {
           title="${sanitizeForHTML(browser.i18n.getMessage('closeboxTooltip'))}"
           ><span id="closebox-bg"
                  part="closebox closebox-bg"
-                 title="${sanitizeForHTML(browser.i18n.getMessage('closeboxTooltip'))}"
                  ></span
            ><span id="closebox-icon"
                   part="closebox closebox-icon"></span></span>
