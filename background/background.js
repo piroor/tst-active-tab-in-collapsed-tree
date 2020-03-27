@@ -641,12 +641,16 @@ function buildContentsForTab(tab) {
           part="favicon ${tab.status}"
           src="${tab.favIconUrl}">`
   ].join('');
-  const label = `<span id="tab"
-                       part="title ${active}"
-                       title="${sanitizeForHTML(tab.title)}"
-                       >${sanitizeForHTML(tab.title)}</span>`;
-  const highlighter = `<span id="highlighter"
-                             part="multiselected-highlighter ${highlighted}"></span>`;
+  const label = `
+    <span id="tab"
+          part="title ${active}"
+          title="${sanitizeForHTML(tab.title)}"
+          >${sanitizeForHTML(tab.title)}</span>
+  `.trim();
+  const highlighter = `
+    <span id="highlighter"
+          part="multiselected-highlighter ${highlighted}"></span>
+  `.trim();
   const closebox = configs.closebox ? `
     <span id="closebox"
           part="closebox closebox-container ${active}"
@@ -684,12 +688,15 @@ function buildContentsForTab(tab) {
     'Ctrl+Shift':    shiftedActionDragData,
     'MacCtrl+Shift': shiftedActionDragData
   };
-  return `<span id="tab-container" part="tab-container"><span id="tab"
-                part="tab ${active}"
-                draggable="true"
-                data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
-                data-tab-id="${tab.id}"
-                >${icon}${label}${highlighter}</span></span>${closebox}`;
+  return `
+    <span id="tab-container" part="tab-container"
+          ><span id="tab"
+                 part="tab ${active}"
+                 draggable="true"
+                 data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
+                 data-tab-id="${tab.id}"
+                 >${icon}${label}${highlighter}</span></span>${closebox}
+  `.trim();
 }
 
 function sanitizeForHTML(string) {
