@@ -17,6 +17,7 @@ function log(...messages) {
 }
 
 function getStyle() {
+  const base = `moz-extension://${location.host}`;
   return `
   tab-item:not(.subtree-collapsed) ::part(%EXTRA_CONTENTS_PART% container) {
     visibility: collapse;
@@ -24,7 +25,13 @@ function getStyle() {
 
   ::part(%EXTRA_CONTENTS_PART% container) {
     --%EXTRA_CONTENTS_PART%-tab-size: calc(var(--tab-size) * ${Math.min(100, Math.max(1, configs.heightPercentage)) / 100});
+    --contents-size: calc(var(--%EXTRA_CONTENTS_PART%-tab-size) - 0.4em);
+    --throbber-size: var(--contents-size);
+    --tab-surface: var(--tab-surface-regular);
+    --tab-text: var(--tab-text-regular);
+  }
 
+  ::part(%EXTRA_CONTENTS_PART% tab-container) {
     background: var(--tabbar-bg, var(--bg-color, ButtonFace));
     border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
     bottom: 0;
@@ -35,14 +42,10 @@ function getStyle() {
     position: absolute;
     right: 0;
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 2px);
-
-    --contents-size: calc(var(--%EXTRA_CONTENTS_PART%-tab-size) - 0.4em);
-    --throbber-size: var(--contents-size);
-    --tab-surface: var(--tab-surface-regular);
-    --tab-text: var(--tab-text-regular);
+    z-index: 4000;
   }
 
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% container) {
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab-container) {
     background: var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace)));
   }
 
@@ -109,6 +112,7 @@ function getStyle() {
     bottom: 0;
     left: 0;
     opacity: 0;
+    pointer-events: none;
     position: absolute;
     right: 0;
     top: 0;
@@ -154,11 +158,55 @@ function getStyle() {
     fill: var(--throbber-color);
     box-shadow: 0 0 2px var(--throbber-shadow-color);
     -moz-context-properties: fill;
-    background: url("/sidebar/styles/throbber.svg") no-repeat;
+    background: url("${base}/resources/throbber.svg") no-repeat;
   }
   :root.simulate-svg-context-fill tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image) {
     background: var(--throbber-color);
-    mask: url("/sidebar/styles/throbber.svg") no-repeat left center / 100%;
+    mask: url("${base}/resources/throbber.svg") no-repeat left center / 100%;
+  }
+
+  /* closebox */
+
+  ::part(%EXTRA_CONTENTS_PART% closebox) {
+    bottom: calc((var(--%EXTRA_CONTENTS_PART%-tab-size) - var(--favicon-size)) / 2);
+    display: inline-block;
+    font-size: calc(var(--favicon-size) * 0.9);
+    height: var(--favicon-size);
+    min-height: var(--favicon-size);
+    min-width: var(--favicon-size);
+    max-height: var(--favicon-size);
+    max-width: var(--favicon-size);
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    transition: background 0.15s ease-out,
+                box-shadow 0.15s ease-out,
+                opacity 0.15s ease-out;
+    width: calc(var(--favicon-size) + 0.2em);
+    z-index: 5000;
+  }
+
+  ::part(%EXTRA_CONTENTS_PART% closebox-icon) {
+    background: var(--tab-text);
+    display: inline-block;
+    font-size: var(--favicon-size);
+    height: var(--favicon-size);
+    min-height: var(--favicon-size);
+    min-width: var(--favicon-size);
+    mask: url("${base}/resources/close-16.svg") no-repeat left center / 100%;
+    max-height: var(--favicon-size);
+    max-width: var(--favicon-size);
+    opacity: 0.8;
+    width: var(--favicon-size);
+  }
+
+  tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox) {
+    opacity: 1;
+  }
+
+  tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox):hover {
+    background: var(--in-content-button-background);
+    box-shadow: 0 0 0.1em rgba(0, 0, 0, 0.3);
   }
 `;
 }
@@ -261,8 +309,11 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             return;
           if (message.originalTarget) {
             const lastActive = activeTabInTree.get(message.tab.id);
-            if (lastActive)
+            if (lastActive) {
+              if (/^<[^>]+part="([^"]* )?closebox(-icon)?[^"]*"/.test(message.originalTarget))
+                return Promise.resolve(doActionFor(lastActive, 'close'));
               return Promise.resolve(doActionFor(lastActive, configs.onClick));
+            }
           }
           else if (!message.tab.states.includes('subtree-collapsed')) {
             // Clear last active descendant for a parent tab
@@ -585,6 +636,7 @@ function buildContentsForTab(tab) {
                        >${sanitizeForHTML(tab.title)}</span>`;
   const highlighter = `<span id="highlighter"
                              part="multiselected-highlighter ${highlighted}"></span>`;
+  const closebox = `<span id="closebox" part="closebox"><span id="closebox-icon" part="closebox-icon"></span></span>`;
 
   const regularActionDragData = {
     type: 'tab',
@@ -612,12 +664,12 @@ function buildContentsForTab(tab) {
     'Ctrl+Shift':    shiftedActionDragData,
     'MacCtrl+Shift': shiftedActionDragData
   };
-  return `<span id="tab"
+  return `<span id="tab-container" part="tab-container"><span id="tab"
                 part="tab ${active}"
                 draggable="true"
                 data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
                 data-tab-id="${tab.id}"
-                >${icon}${label}${highlighter}</span>`;
+                >${icon}${label}${highlighter}</span></span>${closebox}`;
 }
 
 function sanitizeForHTML(string) {

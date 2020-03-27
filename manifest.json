@@ -15,6 +15,10 @@
   "options_ui": {
     "page": "/options/options.html"
   },
+  "web_accessible_resources": [
+    "/resources/throbber.svg",
+    "/resources/close-16.svg"
+  ],
   "default_locale": "en",
   "applications": {
     "gecko": {
