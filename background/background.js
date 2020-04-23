@@ -537,7 +537,7 @@ async function updateTab(
   if (!nativeTab)
     return;
 
-  const tab = Object.assign(nativeTab, tree);
+  const tab = { ...nativeTab, ...tree };
   if (!lastActiveTab)
     lastActiveTab = tab;
 
