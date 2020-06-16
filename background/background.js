@@ -58,6 +58,8 @@ function getStyle() {
     flex-wrap: nowrap;
     padding: 0.2em;
     position: relative;
+  }
+  :root.animation ::part(%EXTRA_CONTENTS_PART% tab) {
     transition: background 0.25s ease-out;
   }
   ::part(%EXTRA_CONTENTS_PART% tab):hover,
@@ -158,7 +160,6 @@ function getStyle() {
     height: var(--throbber-size);
     position: absolute;
     width: calc(var(--throbber-size) * 60);
-    animation: throbber 1.05s var(--throbber-animation-steps) infinite;
 
     fill: var(--throbber-color);
     box-shadow: 0 0 2px var(--throbber-shadow-color);
@@ -168,6 +169,9 @@ function getStyle() {
   :root.simulate-svg-context-fill tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image) {
     background: var(--throbber-color);
     mask: url("${base}/resources/throbber.svg") no-repeat left center / 100%;
+  }
+  :root.animation tab-item.subtree-collapsed ::part(%EXTRA_CONTENTS_PART% throbber-image) {
+    animation: throbber 1.05s var(--throbber-animation-steps) infinite;
   }
 
   /* closebox */
@@ -191,10 +195,12 @@ function getStyle() {
     opacity: 0;
     position: absolute;
     right: 0;
+    z-index: 5000;
+  }
+  :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container) {
     transition: background 0.15s ease-out,
                 box-shadow 0.15s ease-out,
                 opacity 0.15s ease-out;
-    z-index: 5000;
   }
 
   ::part(%EXTRA_CONTENTS_PART% closebox-bg) {
