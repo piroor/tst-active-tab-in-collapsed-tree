@@ -29,3 +29,13 @@ Tree Style Tabに対し、折りたたまれたツリー内で最後にアクテ
 <strong>このアドオンは<a href="https://addons.mozilla.org/firefox/addon/tree-style-tab/">Tree Style Tab</a> 3.4.0以降用のヘルパーアドオンで、TST 3.4.0以降で導入された<a href="https://github.com/piroor/treestyletab/wiki/Tab-Extra-Contents-API">Tab Extra Contents API</a>に依存しています。</strong>
 
 TSTをタスクごとのタブのグループ分けに使っている場合、タスクを切り替える度にツリーを開閉しないといけないのが煩わしいかもしれません。このヘルパーアドオンは、折りたたまれたツリーの上に小さなタブを表示し、ツリーを展開しなくても、そのツリーの中で最後にアクティブだったタブに直接アクセスできるようにします。
+
+アクティブだったタブの表示をスタイルシートでカスタマイズするには、`:part()`疑似要素を使う必要があることに注意してください。例：
+
+```css
+::part(extra-contents-by-tst-active-tab-in-collapsed-tree_piro_sakura_ne_jp tab) {
+background-color: red !important;
+}
+```
+
+partとして指定する名前は、[Tree Style Tabのデバッガ](https://github.com/piroor/treestyletab/wiki/How-to-inspect-tree-of-tabs#how-to-inspect-the-sidebar)（TST Active Tab in Collapsed TreeではなくTree Style Tabのデバッガであることに注意！）のInspectorで調べることができます。
