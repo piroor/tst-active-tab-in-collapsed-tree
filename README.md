@@ -12,6 +12,16 @@ Provides UI to show last active tab in a collapsed tree in Tree Style Tab.
 
 If you use TST mainly for grouping tabs for each task, you may be suffered from too much collapsing/expanding trees on switching tasks. This helper addons provides small tab on a collapsed tree, it allows you to access the last active tab in the tree directly without expanding the tree.
 
+Please note that you need to use `:part()` pseudo element selector to apply your custom styling to the active tab indicator. For example:
+
+```css
+::part(extra-contents-by-tst-active-tab-in-collapsed-tree_piro_sakura_ne_jp tab) {
+   background-color: red !important;
+}
+```
+
+Available part names can be inspected with the [remote debugger for Tree Style Tab](https://github.com/piroor/treestyletab/wiki/How-to-inspect-tree-of-tabs#how-to-inspect-the-sidebar). (You need to run the debugger for Tree Style Tab, not for TST Active Tab in Collapsed Tree.)
+
 ----
 
 Tree Style Tabに対し、折りたたまれたツリー内で最後にアクティブだったタブを表示するUIを提供します。
