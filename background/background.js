@@ -71,8 +71,10 @@ function getStyle() {
   ::part(%EXTRA_CONTENTS_PART% title) {
     overflow: hidden;
     padding: calc((var(--contents-size) - 1em) / 2) 0;
+    position: relative;
     text-overflow: ".."; /*ellipsis*/;
     white-space: pre;
+    z-index: 100;
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab active),
@@ -101,9 +103,11 @@ function getStyle() {
     padding-bottom: calc((var(--contents-size) - var(--favicon-size)) / 2);
     margin-right: 0.25em;
     padding-top: calc((var(--contents-size) - var(--favicon-size)) / 2);
+    position: relative;
     max-height: var(--favicon-size);
     max-width: var(--favicon-size);
     width: var(--contents-size);
+    z-index: 100;
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon sanitized) {
@@ -123,7 +127,7 @@ function getStyle() {
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 100;
+    z-index: 10;
   }
 
   ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter highlighted) {
