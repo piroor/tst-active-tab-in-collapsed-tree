@@ -50,6 +50,8 @@ function getStyle() {
     background-repeat: var(--browser-bg-repeat, none);
     border-radius: var(--tab-border-radius-size);
     bottom: var(--tab-dropshadow-size);
+    box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
+                0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
     left: var(--tab-dropshadow-size);
     position: absolute;
     right: var(--tab-dropshadow-size);
