@@ -32,8 +32,6 @@ function getStyle() {
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab-container) {
-    background: var(--tabbar-bg, var(--bg-color, ButtonFace));
-    border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
     bottom: 0;
     left: 0;
     line-height: 1;
@@ -44,9 +42,50 @@ function getStyle() {
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 2px);
     z-index: 4000;
   }
+  ::part(%EXTRA_CONTENTS_PART% background proton) {
+    background: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
+    background-image: var(--browser-bg-images, none);
+    background-position: var(--browser-bg-position, left);
+    background-size: var(--browser-bg-size, auto);
+    background-repeat: var(--browser-bg-repeat, none);
+    border-radius: var(--tab-border-radius-size);
+    bottom: var(--tab-dropshadow-size);
+    left: var(--tab-dropshadow-size);
+    position: absolute;
+    right: var(--tab-dropshadow-size);
+    top: var(--tab-dropshadow-size);
+    z-index: 10;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container proton)::before {
+    bottom: var(--tab-dropshadow-size);
+    content: "";
+    display: none;
+    left: var(--tab-dropshadow-size);
+    position: absolute;
+    right: var(--tab-dropshadow-size);
+    top: var(--tab-dropshadow-size);
+    z-index: 20;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container active proton)::before,
+  ::part(%EXTRA_CONTENTS_PART% tab-container proton):hover::before {
+    display: inline-block;
+    border-radius: var(--tab-border-radius-size);
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container proton):hover::before {
+    background: var(--tab-surface-hover);
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container active proton)::before,
+  ::part(%EXTRA_CONTENTS_PART% tab-container active proton):hover::before {
+    background: var(--tab-surface-active);
+    box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
+                0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
+    border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
+  }
 
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab-container) {
-    background: var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace)));
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
+    background: var(--browser-background, var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace))));
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
@@ -62,8 +101,8 @@ function getStyle() {
   :root.animation ::part(%EXTRA_CONTENTS_PART% tab) {
     transition: background 0.25s ease-out;
   }
-  ::part(%EXTRA_CONTENTS_PART% tab):hover,
-  ::part(%EXTRA_CONTENTS_PART% closebox-container):hover {
+  ::part(%EXTRA_CONTENTS_PART% tab photon):hover,
+  ::part(%EXTRA_CONTENTS_PART% closebox-container photon):hover {
     --tab-surface: var(--tab-surface-hover);
     border-left-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
   }
@@ -77,24 +116,24 @@ function getStyle() {
     z-index: 100;
   }
 
-  ::part(%EXTRA_CONTENTS_PART% tab active),
-  ::part(%EXTRA_CONTENTS_PART% closebox-container active) {
+  ::part(%EXTRA_CONTENTS_PART% tab active photon),
+  ::part(%EXTRA_CONTENTS_PART% closebox-container active photon) {
     --tab-surface: var(--tab-surface-active);
     --tab-text: var(--tab-text-active);
     border-left-color: var(--tab-highlighter);
     text-shadow: var(--tab-text-shadow);
   }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active),
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active) {
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active photon),
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active photon) {
     --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active));
   }
-  ::part(%EXTRA_CONTENTS_PART% tab active):hover,
-  ::part(%EXTRA_CONTENTS_PART% closebox-container active):hover {
+  ::part(%EXTRA_CONTENTS_PART% tab active photon):hover,
+  ::part(%EXTRA_CONTENTS_PART% closebox-container active photon):hover {
     --tab-surface: var(--tab-surface-active-hover);
     border-left-color: var(--tab-highlighter);
   }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active):hover,
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active):hover {
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active photon):hover,
+  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active photon):hover {
     --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active-hover));
   }
 
@@ -127,7 +166,7 @@ function getStyle() {
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 10;
+    z-index: 50;
   }
 
   ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter highlighted) {
@@ -642,34 +681,35 @@ function setContents(tabId) {
 function buildContentsForTab(tab) {
   const active = tab.active ? 'active' : '';
   const highlighted = !tab.active && tab.highlighted ? 'highlighted' : '';
+  const theme = configs.theme;
 
   const icon = [
     `<span id="throbber"
-           part="throbber ${tab.status}"
-           ><span part="throbber-image ${active}"></span></span>`,
+           part="throbber ${tab.status} ${theme}"
+           ><span part="throbber-image ${active} ${theme}"></span></span>`,
     `<img id="favicon"
-          part="favicon ${tab.status}"
+          part="favicon ${tab.status} ${theme}"
           src="${tab.favIconUrl}">`
   ].join('');
   const label = `
     <span id="tab"
-          part="title ${active}"
+          part="title ${active} ${theme}"
           title="${sanitizeForHTML(tab.title)}"
           >${sanitizeForHTML(tab.title)}</span>
   `.trim();
   const highlighter = `
     <span id="highlighter"
-          part="multiselected-highlighter ${highlighted}"></span>
+          part="multiselected-highlighter ${highlighted} ${theme}"></span>
   `.trim();
   const closebox = configs.closebox ? `
     <span id="closebox"
-          part="closebox closebox-container ${active}"
+          part="closebox closebox-container ${active} ${theme}"
           title="${sanitizeForHTML(browser.i18n.getMessage('closeboxTooltip'))}"
           ><span id="closebox-bg"
-                 part="closebox closebox-bg"
+                 part="closebox closebox-bg ${theme}"
                  ></span
            ><span id="closebox-icon"
-                  part="closebox closebox-icon"></span></span>
+                  part="closebox closebox-icon ${theme}"></span></span>
   `.trim() : '';
 
   const regularActionDragData = {
@@ -699,9 +739,11 @@ function buildContentsForTab(tab) {
     'MacCtrl+Shift': shiftedActionDragData
   };
   return `
-    <span id="tab-container" part="tab-container"
+    <span id="tab-container"
+          part="tab-container ${active} ${theme}"
+          ><span part="background ${active} ${theme}"></span
           ><span id="tab"
-                 part="tab ${active}"
+                 part="tab ${active} ${theme}"
                  draggable="true"
                  data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
                  data-tab-id="${tab.id}"

@@ -10,6 +10,10 @@ import Configs from '/extlib/Configs.js';
 export const configs = new Configs({
   heightPercentage: 60,
   closebox: true,
+  theme: (() => {
+    const matched = navigator.userAgent.match(/Firefox\/(\d+)\.\d+/);
+    return (matched && parseInt(matched[1]) >= 89) ? 'proton' : 'photon';
+  })(),
 
   onClick:       'focus',
   onDblClick:    'expand',
