@@ -1,8 +1,10 @@
 # History
 
  - master/HEAD
+ - 1.0.6 (2021.6.11)
+   * Add "Proton" theme.
  - 1.0.5 (2020.7.29)
-   * Better support for the Managed Storage
+   * Better support for the Managed Storage.
  - 1.0.4 (2020.3.28)
    * Add closebox for each last active tab.
    * Show tooltip on each last active tab.
