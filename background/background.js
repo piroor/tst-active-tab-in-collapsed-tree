@@ -318,6 +318,7 @@ configs.$addObserver(key => {
   switch (key) {
     case 'heightPercentage':
     case 'closebox':
+    case 'theme':
       registerToTST();
       return;
   }
