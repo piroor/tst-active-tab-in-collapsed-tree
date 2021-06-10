@@ -9,6 +9,10 @@
 
   "config_closebox_label":    { "message": "最後にアクティブだったタブにクローズボックスを表示する" },
 
+  "config_theme_caption": { "message": "テーマ" },
+  "config_theme_proton":  { "message": "Proton" },
+  "config_theme_photon":  { "message": "Photon" },
+
   "config_onAction_caption":    { "message": "折りたたまれたツリーで最後にアクティブだったタブに対する操作" },
   "config_onAction_focus":      { "message": "タブを選択する" },
   "config_onAction_close":      { "message": "タブを閉じる" },
