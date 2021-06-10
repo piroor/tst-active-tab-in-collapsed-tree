@@ -1,6 +1,6 @@
 # TST Active Tab in Collapsed Tree
 
-[![Build Status](https://travis-ci.org/piroor/tst-active-tab-in-collapsed-tree.svg?branch=trunk)](https://travis-ci.org/piroor/tst-active-tab-in-collapsed-tree)
+![Build Status](https://github.com/piroor/tst-active-tab-in-collapsed-tree/actions/workflows/main.yml/badge.svg?branch=trunk)
 
 Installable package is available at https://addons.mozilla.org/firefox/addon/tst-active-tab-in-collapsed-tr/
 
