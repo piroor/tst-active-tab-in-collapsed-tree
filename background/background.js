@@ -43,7 +43,7 @@ function getStyle() {
     z-index: 4000;
   }
   ::part(%EXTRA_CONTENTS_PART% background proton) {
-    background: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
+    background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
     background-image: var(--browser-bg-images, none);
     background-position: var(--browser-bg-position, left);
     background-size: var(--browser-bg-size, auto);
@@ -74,13 +74,16 @@ function getStyle() {
     border-radius: var(--tab-border-radius-size);
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container proton):hover::before {
-    background: var(--tab-surface-hover);
+    background-color: var(--tab-text-regular);
+    opacity: 0.11;
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container active proton)::before,
   ::part(%EXTRA_CONTENTS_PART% tab-container active proton):hover::before {
-    background: var(--tab-surface-active);
+    background-color: var(--tab-surface-active);
+    background-image: var(--tab-surface-active-bgimage);
     box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
                 0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
+    opacity: 1;
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
     border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
