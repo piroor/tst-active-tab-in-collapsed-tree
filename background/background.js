@@ -39,8 +39,12 @@ function getStyle() {
     overflow: hidden;
     position: absolute;
     right: 0;
-    top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 2px);
+    top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size));
     z-index: 4000;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
+    top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
+    bottom: -1px /* for border-bottom */;
   }
   ::part(%EXTRA_CONTENTS_PART% background proton) {
     background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
