@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 1.0.7 (2021.6.20)
+   * Better appearance of the Proton theme.
+   * Apply the height option correctly for the Proton theme.
  - 1.0.6 (2021.6.11)
    * Add "Proton" theme.
  - 1.0.5 (2020.7.29)
