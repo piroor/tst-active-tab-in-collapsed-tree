@@ -593,7 +593,7 @@ async function updateTab(
       tab:  tabId
     }).catch(_error => null)
   ]);
-  if (!nativeTab)
+  if (!nativeTab || !tree)
     return;
 
   const tab = { ...nativeTab, ...tree };
