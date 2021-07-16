@@ -1,6 +1,7 @@
 # History
 
  - master/HEAD
+   * Suppress error for tabs detached from their window.
  - 1.0.7 (2021.6.20)
    * Better appearance of the Proton theme.
    * Apply the height option correctly for the Proton theme.
