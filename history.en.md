@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 1.0.8 (2021.10.1)
+   * The "zh-CN" locale is added by [NightSharp](https://github.com/NightSharp). Thanks!
    * Suppress error for tabs detached from their window.
  - 1.0.7 (2021.6.20)
    * Better appearance of the Proton theme.

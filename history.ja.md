@@ -1,6 +1,8 @@
 # 更新履歴
 
  - master/HEAD
+ - 1.0.8 (2021.10.1)
+   * zh-CNロケール追加（by [NightSharp](https://github.com/NightSharp), thanks!）
    * ウィンドウからタブが切り離されたときにエラーが報告されないようにした
  - 1.0.7 (2021.6.20)
    * Protonテーマの見た目をより自然に改善
