@@ -676,15 +676,17 @@ function setContents(tabId) {
   const contents = contentsForTab.get(tabId);
   if (contents)
     browser.runtime.sendMessage(TST_ID, {
-      type:  'set-extra-tab-contents',
-      id:    tabId,
+      type:  'set-extra-contents',
+      place: 'tab-front',
+      tabId,
       style: THROBBER_ANIMATION, // Gecko doesn't apply animation defined in the owner document to shadow DOM elements...
       contents
     });
   else
     browser.runtime.sendMessage(TST_ID, {
-      type: 'clear-extra-tab-contents',
-      id:   tabId
+      type:  'clear-extra-contents',
+      place: 'tab-front',
+      tabId,
     });
 }
 
