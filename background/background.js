@@ -304,9 +304,9 @@ async function registerToTST() {
         'try-expand-tree-from-focused-parent',
         'try-move-focus-from-collapsing-tree',
         'try-redirect-focus-from-collaped-tab',
-        'tab-mousedown',
-        'tab-clicked',
-        'tab-dblclicked',
+        'extra-contents-mousedown',
+        'extra-contents-clicked',
+        'extra-contents-dblclicked',
         'tree-attached',
         'tree-detached',
         'tree-collapsed-state-changed'
@@ -367,7 +367,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
               !tab.states.includes('collapsed'));
           });
 
-        case 'tab-mousedown':
+        case 'extra-contents-mousedown':
           if (message.button != 0 ||
               message.twisty ||
               message.soundButton ||
@@ -392,7 +392,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           }
           break;
 
-        case 'tab-clicked':
+        case 'extra-contents-clicked':
           if (message.button == 1 &&
               message.originalTarget) {
             const lastActive = activeTabInTree.get(message.tab.id);
@@ -401,7 +401,7 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           }
           break;
 
-        case 'tab-dblclicked':
+        case 'extra-contents-dblclicked':
           if (message.button != 0 ||
               message.twisty ||
               message.soundButton ||
