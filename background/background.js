@@ -584,11 +584,12 @@ async function updateTab(
   lastActiveTab = null,
   { initializing = false,
     clear = false,
-    update = false } = {}
+    update = false,
+    treeItem = null } = {}
 ) {
   const [nativeTab, tree] = await Promise.all([
-    browser.tabs.get(tabId).catch(_error => null),
-    browser.runtime.sendMessage(TST_ID, {
+    treeItem || browser.tabs.get(tabId).catch(_error => null),
+    treeItem || browser.runtime.sendMessage(TST_ID, {
       type: 'get-tree',
       tab:  tabId
     }).catch(_error => null)
@@ -771,13 +772,26 @@ async function updateAllTabs(options = {}) {
   const windows = options.windowId ? [await browser.windows.get(options.windowId, { populate: true })] : (await browser.windows.getAll({ populate: true }));
   for (const window of windows) {
     const tabs = window.tabs.sort((a, b) => a.lastAccessed - b.lastAccessed);
+    const treeItems = await browser.runtime.sendMessage(TST_ID, {
+      type:     'get-tree' ,
+      tabs:     window.tabs.map(tab => tab.id),
+      windowId: window.id,
+    });
+
     const tabsById = {};
     const lastActiveTabIds = await Promise.all(tabs.map(tab => {
       tabsById[tab.id] = tab;
       return browser.sessions.getTabValue(tab.id, 'lastActiveTabId');
     }));
+    for (const treeItem of treeItems) {
+      tabsById[treeItem.id] = {
+        ...(tabsById[treeItem.id] || {}),
+        ...treeItem,
+      };
+    }
     tabs.forEach((tab, index) => {
       const lastActiveTabId = lastActiveTabIds[index];
+      const treeItem = tabsById[tab.id];
       if (lastActiveTabId) {
         const lastActiveTab = tabsById[lastActiveTabId];
         reserveToSetContents(
@@ -789,7 +803,7 @@ async function updateAllTabs(options = {}) {
           parentForTab.set(lastActiveTabId, tab.id);
       }
       else {
-        updateTab(tab.id, tab, { initializing: true });
+        updateTab(tab.id, treeItem, { initializing: true, treeItem });
       }
     });
   }
