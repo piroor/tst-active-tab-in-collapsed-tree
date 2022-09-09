@@ -294,29 +294,38 @@ let lastExpandingTree;
 
 async function registerToTST() {
   try {
-    await browser.runtime.sendMessage(TST_ID, {
-      type: 'register-self',
-      name: browser.i18n.getMessage('extensionName'),
-      //icons: browser.runtime.getManifest().icons,
-      listeningTypes: [
-        'sidebar-show',
-        'try-expand-tree-from-focused-collapsed-tab',
-        'try-expand-tree-from-focused-parent',
-        'try-move-focus-from-collapsing-tree',
-        'try-redirect-focus-from-collaped-tab',
-        'extra-contents-mousedown',
-        'extra-contents-clicked',
-        'extra-contents-dblclicked',
-        'tree-attached',
-        'tree-detached',
-        'tree-collapsed-state-changed'
-      ],
-      style: getStyle()
-    });
-    updateAllTabs();
+    const [treeItemsMap] = await Promise.all([
+      initAllTreeItems(),
+      browser.runtime.sendMessage(TST_ID, {
+        type: 'register-self',
+        name: browser.i18n.getMessage('extensionName'),
+        //icons: browser.runtime.getManifest().icons,
+        listeningTypes: [
+          'sidebar-show',
+          'try-expand-tree-from-focused-collapsed-tab',
+          'try-expand-tree-from-focused-parent',
+          'try-move-focus-from-collapsing-tree',
+          'try-redirect-focus-from-collaped-tab',
+          'tab-mousedown',
+          'extra-contents-mousedown',
+          'extra-contents-clicked',
+          'extra-contents-dblclicked',
+          'tree-attached',
+          'tree-detached',
+          'tree-collapsed-state-changed'
+        ],
+        style: getStyle()
+      }),
+      browser.runtime.sendMessage(TST_ID, {
+        type: 'clear-all-extra-contents',
+      }),
+    ]);
+    // This need to be done after all old contents are cleared!
+    await renderAllContents(treeItemsMap);
   }
-  catch(_error) {
-    // TST is not available
+  catch(error) {
+    // TST is not available, or failed to initialize
+    log(error);
   }
 }
 configs.$loaded.then(registerToTST);
@@ -342,7 +351,8 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           break;
 
         case 'sidebar-show':
-          updateAllTabs({ windowId: message.windowId });
+          getTreeItemsMapForWindow(message.windowId)
+            .then(treeItemsMap => renderAllContents(treeItemsMap));
           break;
 
         case 'try-expand-tree-from-focused-parent':
@@ -367,6 +377,9 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
               !tab.states.includes('collapsed'));
           });
 
+        case 'tab-mousedown':
+          if (message.originalTarget) // ignore backward compatibility message
+            return;
         case 'extra-contents-mousedown':
           if (message.button != 0 ||
               message.twisty ||
@@ -434,12 +447,17 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
 
         case 'tree-collapsed-state-changed': {
           const lastActiveId = activeTabInTree.get(message.tab.id);
+          log(`tree collapsed state changed: ${message.tab.id} => ${lastActiveId} [${message.collapsed ? 'collapsed' : 'expaded'}]`);
           if (lastActiveId &&
               message.collapsed)
             browser.runtime.sendMessage(TST_ID, {
               type: 'get-tree',
               tab:  lastActiveId
-            }).then(tryUpdateSuccessorTabFor);
+            }).then(treeItem => {
+              if (!message.tab.states.includes('collapsed'))
+                renderContents(message.tab.id, treeItem);
+              tryUpdateSuccessorTabFor(treeItem);
+            });
           if (lastExpandingTreeClearTimer)
             clearTimeout(lastExpandingTreeClearTimer);
           lastExpandingTreeClearTimer = setTimeout(() => {
@@ -568,6 +586,51 @@ browser.windows.onRemoved.addListener(windowId => {
 });
 
 
+
+
+async function initAllTreeItems() {
+  const windows = await browser.windows.getAll({ populate: true });
+  log('initAllTreeItems ', windows);
+  const treeItemEntries = (await Promise.all(windows.map(async window => {
+    const treeItemsMap = await getTreeItemsMapForWindow(window);
+    const tabs = Array.from(treeItemsMap.values()).sort((a, b) => a.lastAccessed - b.lastAccessed)
+    const lastActiveTabIds = await Promise.all(tabs.map(tab =>
+      browser.sessions.getTabValue(tab.id, 'lastActiveTabId').catch(_error => null)
+    ));
+    log(` window ${window.id}: `, tabs, treeItemsMap);
+    return tabs.map((tab, index) => {
+      const treeItem = treeItemsMap.get(tab.id);
+      const lastActiveTabId = lastActiveTabIds[index];
+      if (lastActiveTabId) {
+        log(`  tab ${tab.windowId}-${tab.id} => ${lastActiveTabId}`);
+        activeTabInTree.set(tab.id, lastActiveTabId);
+        lastActiveTabInTree.set(tab.id, lastActiveTabId);
+        parentForTab.set(lastActiveTabId, treeItem.ancestorTabIds[0]);
+      }
+      return [tab.id, treeItem];
+    });
+  }))).flat();
+  log('initAllTreeItems: treeItemEntries = ', treeItemEntries);
+  return new Map(treeItemEntries);
+}
+
+async function getTreeItemsMapForWindow(windowIdOrWindow) {
+  const windowId = typeof windowIdOrWindow == 'number' ? windowIdOrWindow : windowIdOrWindow.id;
+  const tabs = await (async () => {
+    if (typeof windowIdOrWindow == 'number' ||
+        !windowIdOrWindow.tabs)
+      return browser.windows.get(windowId, { populate: true }).then(window => window.tabs);
+    return windowIdOrWindow.tabs;
+  })();
+  const treeItems = await browser.runtime.sendMessage(TST_ID, {
+    type: 'get-tree' ,
+    tabs: tabs.map(tab => tab.id),
+    windowId,
+  });
+  return new Map(tabs.map((tab, index) => [tab.id, { ...tab, ...treeItems[index] }]));
+}
+
+
 function reserveToUpdateTab(tabId, lastActiveTab, options = {}) {
   const timer = reserveToUpdateTab.reserved.get(tabId);
   if (timer)
@@ -668,13 +731,26 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
       browser.sessions.removeTabValue(tabId, 'lastActiveTabId');
       log(`Unset last active tab of ${tabId}`);
     }
-    setContents(tabId);
+    renderContents(tabId);
   }, 0));
 }
 reserveToSetContents.reserved = new Map();
 
-function setContents(tabId) {
-  const contents = contentsForTab.get(tabId);
+async function renderContents(tabId, lastActiveTab = null) {
+  const lastActiveTabId = activeTabInTree.get(tabId);
+  const contents = contentsForTab.get(tabId) || (
+    lastActiveTabId &&
+    await (async () => {
+      if (!lastActiveTab)
+        lastActiveTab = await browser.tabs.get(lastActiveTabId);
+      if (!lastActiveTab)
+        return null;
+      const contents = buildContentsForTab(lastActiveTab);
+      contentsForTab.set(tabId, contents);
+      return contents;
+    })()
+  );
+  log(`renderContents ${tabId} ${contents ? '(has contents)' : '(no contents)'}`);
   if (contents)
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-contents',
@@ -768,69 +844,40 @@ function sanitizeForHTML(string) {
   return string.replace(/&/g, '&amp;').replace(/\"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-async function updateAllTabs(options = {}) {
-  const windows = options.windowId ? [await browser.windows.get(options.windowId, { populate: true })] : (await browser.windows.getAll({ populate: true }));
-  for (const window of windows) {
-    const tabs = window.tabs.sort((a, b) => a.lastAccessed - b.lastAccessed);
-    const treeItems = await browser.runtime.sendMessage(TST_ID, {
-      type:     'get-tree' ,
-      tabs:     window.tabs.map(tab => tab.id),
-      windowId: window.id,
-    });
-
-    const tabsById = {};
-    const lastActiveTabIds = await Promise.all(tabs.map(tab => {
-      tabsById[tab.id] = tab;
-      return browser.sessions.getTabValue(tab.id, 'lastActiveTabId');
-    }));
-    for (const treeItem of treeItems) {
-      tabsById[treeItem.id] = {
-        ...(tabsById[treeItem.id] || {}),
-        ...treeItem,
-      };
-    }
-    tabs.forEach((tab, index) => {
-      const lastActiveTabId = lastActiveTabIds[index];
-      const treeItem = tabsById[tab.id];
-      if (lastActiveTabId) {
-        const lastActiveTab = tabsById[lastActiveTabId];
-        reserveToSetContents(
-          tab.id,
-          lastActiveTabId,
-          lastActiveTab && buildContentsForTab(lastActiveTab)
-        );
-        if (lastActiveTab)
-          parentForTab.set(lastActiveTabId, tab.id);
-      }
-      else {
-        updateTab(tab.id, treeItem, { initializing: true, treeItem });
-      }
-    });
-  }
+async function renderAllContents(treeItemsMap) {
+  return Promise.all(Array.from(treeItemsMap.values(), treeItem => {
+    const lastActiveTabId = activeTabInTree.get(treeItem.id);
+    if (!lastActiveTabId ||
+        treeItem.states.includes('collapsed') ||
+        !treeItem.states.includes('subtree-collapsed'))
+      return;
+    return renderContents(treeItem.id, lastActiveTabId && treeItemsMap.get(lastActiveTabId));
+  }));
 }
 
-async function tryUpdateSuccessorTabFor(tab) {
-  if (!tab)
+
+async function tryUpdateSuccessorTabFor(treeItem) {
+  if (!treeItem)
     return;
   const ancestors = await browser.runtime.sendMessage(TST_ID, {
     type: 'get-tree',
-    tabs: tab.ancestorTabIds
+    tabs: treeItem.ancestorTabIds
   });
   if (!ancestors)
     return;
-  const nearestVisibleAncestor = ancestors.find(tab => !tab.states.includes('collapsed'));
+  const nearestVisibleAncestor = ancestors.find(treeItem => !treeItem.states.includes('collapsed'));
   if (nearestVisibleAncestor)
-    browser.tabs.update(tab.id, {
+    browser.tabs.update(treeItem.id, {
       successorTabId: nearestVisibleAncestor.id
     });
 }
 
 async function expandTreeFor(tabId) {
-  const tab = await browser.runtime.sendMessage(TST_ID, {
+  const treeItem = await browser.runtime.sendMessage(TST_ID, {
     type: 'get-tree',
     tab:  tabId
   });
-  for (const ancestorId of tab.ancestorTabIds) {
+  for (const ancestorId of treeItem.ancestorTabIds) {
     browser.runtime.sendMessage(TST_ID, {
       type: 'expand-tree',
       tab:  ancestorId
