@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+   * Follow changes to TST 3.9.0.
+   * Optimize performance. Extra contents in tabs won't be inserted until they become really necessary.
  - 1.0.8 (2021.10.1)
    * The "zh-CN" locale is added by [NightSharp](https://github.com/NightSharp). Thanks!
    * Suppress error for tabs detached from their window.
