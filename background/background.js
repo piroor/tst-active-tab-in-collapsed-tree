@@ -619,7 +619,7 @@ async function getTreeItemsMapForWindow(windowIdOrWindow) {
   const tabs = await (async () => {
     if (typeof windowIdOrWindow == 'number' ||
         !windowIdOrWindow.tabs)
-      return browser.windows.query({ windowId });
+      return browser.tabs.query({ windowId });
     return windowIdOrWindow.tabs;
   })();
   const treeItems = await browser.runtime.sendMessage(TST_ID, {
