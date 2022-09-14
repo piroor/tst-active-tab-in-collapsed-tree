@@ -594,14 +594,19 @@ async function initAllTreeItems() {
   const treeItemEntries = (await Promise.all(windows.map(async window => {
     const treeItemsMap = await getTreeItemsMapForWindow(window);
     const tabs = Array.from(treeItemsMap.values()).sort((a, b) => a.lastAccessed - b.lastAccessed)
-    const lastActiveTabIds = await Promise.all(tabs.map(tab =>
-      browser.sessions.getTabValue(tab.id, 'lastActiveTabId').catch(_error => null)
-    ));
-    log(` window ${window.id}: `, tabs, treeItemsMap);
-    return tabs.map((tab, index) => {
+    const lastActiveTabIdsMap = new Map(await Promise.all(tabs.map(tab =>
+      Promise.all([tab.id, browser.sessions.getTabValue(tab.id, 'lastActiveTabId').catch(_error => null)])
+    )));
+    log(` window ${window.id}: `, { tabs, treeItemsMap, lastActiveTabIdsMap });
+    return tabs.map(tab => {
       const treeItem = treeItemsMap.get(tab.id);
-      const lastActiveTabId = lastActiveTabIds[index];
-      if (lastActiveTabId) {
+      const lastActiveTabId = lastActiveTabIdsMap.get(tab.id);
+      const lastActiveTabTreeItem = lastActiveTabId && treeItemsMap.get(lastActiveTabId);
+      if (lastActiveTabId)
+        log(`  trying to map ${tab.id}: `, { treeItem, lastActiveTabId, lastActiveTabTreeItem });
+      if (lastActiveTabId &&
+          lastActiveTabTreeItem &&
+          lastActiveTabTreeItem.ancestorTabIds.includes(tab.id)) {
         log(`  tab ${tab.windowId}-${tab.id} => ${lastActiveTabId}`);
         activeTabInTree.set(tab.id, lastActiveTabId);
         lastActiveTabInTree.set(tab.id, lastActiveTabId);
@@ -627,7 +632,14 @@ async function getTreeItemsMapForWindow(windowIdOrWindow) {
     tabs: tabs.map(tab => tab.id),
     windowId,
   });
-  return new Map(tabs.map((tab, index) => [tab.id, { ...tab, ...treeItems[index] }]));
+  // "get-tree" can return treeItems in different order, so we cannot map them based on their indices.
+  const treeItemsMap = new Map(treeItems.map(treeItem => [treeItem.id, treeItem]));
+  log('getTreeItemsMapForWindow: ', { tabs, treeItems, treeItemsMap });
+  return new Map(tabs.map(tab => {
+    if (!treeItemsMap.get(tab.id))
+      log(`!missing tree item with id ${tab.id}`);
+    return [tab.id, { ...tab, ...treeItemsMap.get(tab.id) }];
+  }));
 }
 
 
