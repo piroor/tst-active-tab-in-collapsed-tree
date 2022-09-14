@@ -750,7 +750,7 @@ async function renderContents(tabId, lastActiveTab = null) {
       return contents;
     })()
   );
-  log(`renderContents ${tabId} ${contents ? '(has contents)' : '(no contents)'}`);
+  log(`renderContents ${tabId} ${contents ? '(has contents)' : '(no contents)'}`, lastActiveTab);
   if (contents)
     browser.runtime.sendMessage(TST_ID, {
       type:  'set-extra-contents',
