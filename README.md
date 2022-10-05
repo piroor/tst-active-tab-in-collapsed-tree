@@ -2,7 +2,8 @@
 
 ![Build Status](https://github.com/piroor/tst-active-tab-in-collapsed-tree/actions/workflows/main.yml/badge.svg?branch=trunk)
 
-Installable package is available at https://addons.mozilla.org/firefox/addon/tst-active-tab-in-collapsed-tr/
+* [Signed package on AMO](https://addons.mozilla.org/firefox/addon/tst-active-tab-in-collapsed-tr/)
+* [Development builds for each commit are available at "Artifacts" of the CI/CD action](https://github.com/piroor/tst-active-tab-in-collapsed-tree/actions?query=workflow%3ACI%2FCD)
 
 ----
 
