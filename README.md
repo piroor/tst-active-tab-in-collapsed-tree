@@ -40,3 +40,12 @@ background-color: red !important;
 ```
 
 partとして指定する名前は、[Tree Style Tabのデバッガ](https://github.com/piroor/treestyletab/wiki/How-to-inspect-tree-of-tabs#how-to-inspect-the-sidebar)（TST Active Tab in Collapsed TreeではなくTree Style Tabのデバッガであることに注意！）のInspectorで調べることができます。
+
+## Privacy Policy
+
+This software does not collect any privacy data automatically, but this includes ability to synchronize options across multiple devices automatically via Firefox Sync.
+Any data you input to options may be sent to Mozilla's Sync server, if you configure Firefox to activate Firefox Sync.
+
+このソフトウェアはいかなるプライバシー情報も自動的に収集しませんが、Firefox Syncを介して自動的に設定情報をデバイス間で同期する機能を含みます。
+Firefox Syncを有効化している場合、設定画面に入力されたデータは、Mozillaが運用するSyncサーバーに送信される場合があります。
+
