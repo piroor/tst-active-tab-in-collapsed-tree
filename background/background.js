@@ -302,6 +302,7 @@ async function registerToTST() {
         //icons: browser.runtime.getManifest().icons,
         listeningTypes: [
           'sidebar-show',
+          'tab-rendered',
           'try-expand-tree-from-focused-collapsed-tab',
           'try-expand-tree-from-focused-parent',
           'try-move-focus-from-collapsing-tree',
@@ -354,6 +355,22 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
           getTreeItemsMapForWindow(message.windowId)
             .then(treeItemsMap => renderAllContents(treeItemsMap));
           break;
+
+        case 'tab-rendered': {
+          if (message.tab.states.includes('collapsed'))
+            break;
+          const lastActiveId = activeTabInTree.get(message.tab.id);
+          if (!lastActiveId ||
+              !message.tab.states.includes('subtree-collapsed'))
+            break;
+          log(`tab is rendered with collapsed active tab: ${message.tab.id} => ${lastActiveId}`);
+          browser.runtime.sendMessage(TST_ID, {
+            type: 'get-tree',
+            tab:  lastActiveId
+          }).then(treeItem => {
+            renderContents(message.tab.id, treeItem);
+          });
+        }; break;
 
         case 'try-expand-tree-from-focused-parent':
           //if (!activeTabInTree.get(message.tab.id))
