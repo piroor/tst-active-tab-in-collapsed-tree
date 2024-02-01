@@ -817,7 +817,6 @@ async function renderContents(tabId, lastActiveTab = null) {
       return;
     const messages = [...mPendingRenderContentsMessages.values()];
     mPendingRenderContentsMessages.clear();
-    console.log('SEND ', messages);
     browser.runtime.sendMessage(TST_ID, { messages });
   });
 }
