@@ -302,7 +302,7 @@ async function registerToTST() {
         //icons: browser.runtime.getManifest().icons,
         listeningTypes: [
           'sidebar-show',
-          'tab-rendered',
+          'tabs-rendered',
           'try-expand-tree-from-focused-collapsed-tab',
           'try-expand-tree-from-focused-parent',
           'try-move-focus-from-collapsing-tree',
@@ -356,19 +356,31 @@ browser.runtime.onMessageExternal.addListener((message, sender) => {
             .then(treeItemsMap => renderAllContents(treeItemsMap));
           break;
 
-        case 'tab-rendered': {
-          if (message.tab.states.includes('collapsed'))
-            break;
-          const lastActiveId = activeTabInTree.get(message.tab.id);
-          if (!lastActiveId ||
-              !message.tab.states.includes('subtree-collapsed'))
-            break;
-          log(`tab is rendered with collapsed active tab: ${message.tab.id} => ${lastActiveId}`);
+        case 'tabs-rendered': {
+          const tabsById = new Map(message.tabs.map(tab => [tab.id, tab]));
+          const lastActiveTabIdsToGet = new Map();
+          for (const tab of message.tabs) {
+            if (tab.states.includes('collapsed'))
+              continue;
+            const lastActiveId = activeTabInTree.get(tab.id);
+            if (!lastActiveId ||
+                !tab.states.includes('subtree-collapsed'))
+              continue;
+            log(`tab is rendered with collapsed active tab: ${tab.id} => ${lastActiveId}`);
+            const lastActiveTab = tabsById.get(lastActiveId);
+            if (lastActiveTab)
+              renderContents(tab.id, lastActiveTab);
+            else
+              lastActiveTabIdsToGet.set(tab.id, lastActiveId);
+          }
           browser.runtime.sendMessage(TST_ID, {
             type: 'get-tree',
-            tab:  lastActiveId
-          }).then(treeItem => {
-            renderContents(message.tab.id, treeItem);
+            tabs: [...new Set([...lastActiveTabIdsToGet.values()])],
+          }).then(lastActiveTabs => {
+            const lastActiveTabsById = new Map(lastActiveTabs.map(tab => [tab.id, tab]));
+            for (const [id, lastActiveTabId] of lastActiveTabIdsToGet.entries()) {
+              renderContents(id, lastActiveTabsById.get(lastActiveTabId));
+            }
           });
         }; break;
 
