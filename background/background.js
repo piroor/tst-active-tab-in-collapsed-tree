@@ -6,7 +6,8 @@
 'use strict';
 
 import {
-  configs
+  configs,
+  nextFrame,
 } from '/common/common.js';
 
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
@@ -777,6 +778,8 @@ function reserveToSetContents(tabId, lastActiveTabId, contents) {
 }
 reserveToSetContents.reserved = new Map();
 
+const mPendingRenderContentsMessages = new Map();
+
 async function renderContents(tabId, lastActiveTab = null) {
   const lastActiveTabId = activeTabInTree.get(tabId);
   const contents = contentsForTab.get(tabId) || (
@@ -793,7 +796,7 @@ async function renderContents(tabId, lastActiveTab = null) {
   );
   log(`renderContents ${tabId} ${contents ? '(has contents)' : '(no contents)'}`, lastActiveTab);
   if (contents)
-    browser.runtime.sendMessage(TST_ID, {
+    mPendingRenderContentsMessages.set(tabId, {
       type:  'set-extra-contents',
       place: 'tab-front',
       tabId,
@@ -801,12 +804,24 @@ async function renderContents(tabId, lastActiveTab = null) {
       contents
     });
   else
-    browser.runtime.sendMessage(TST_ID, {
+    mPendingRenderContentsMessages.set(tabId, {
       type:  'clear-extra-contents',
       place: 'tab-front',
       tabId,
     });
+
+  const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
+  renderContents.lastStartedAt = startAt;
+  nextFrame().then(() => {
+    if (renderContents.lastStartedAt != startAt)
+      return;
+    const messages = [...mPendingRenderContentsMessages.values()];
+    mPendingRenderContentsMessages.clear();
+    console.log('SEND ', messages);
+    browser.runtime.sendMessage(TST_ID, { messages });
+  });
 }
+
 
 function buildContentsForTab(tab) {
   const active = tab.active ? 'active' : '';

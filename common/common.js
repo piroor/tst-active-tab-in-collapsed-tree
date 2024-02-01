@@ -28,3 +28,9 @@ export const configs = new Configs({
     'debug'
   ]
 });
+
+export function nextFrame() {
+  return new Promise((resolve, _reject) => {
+    window.requestAnimationFrame(resolve);
+  });
+}
