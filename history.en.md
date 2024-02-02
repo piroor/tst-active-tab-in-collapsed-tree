@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 1.2 (2024.2.2)
+   * Optimize with reduced API call.
+   * Prepare to support next version TST.
  - 1.1.1 (2022.9.14)
    * Fix wrong mapping for non-descendant tabs at the startup.
  - 1.1.0 (2022.9.13)
