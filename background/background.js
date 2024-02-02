@@ -293,9 +293,12 @@ const lastActiveTabInTree = new Map();
 const parentForTab = new Map();
 let lastExpandingTree;
 
+let mCanSendBulkMessages = false;
+
 async function registerToTST() {
   try {
-    const [treeItemsMap] = await Promise.all([
+    const [TSTVersion, treeItemsMap] = await Promise.all([
+      browser.runtime.sendMessage(TST_ID, { type: 'vet-version' }),
       initAllTreeItems(),
       browser.runtime.sendMessage(TST_ID, {
         type: 'register-self',
@@ -322,6 +325,8 @@ async function registerToTST() {
         type: 'clear-all-extra-contents',
       }),
     ]);
+    if (TSTVersion && parseInt(TSTVersion.split('.')[0]) >= 4)
+      mCanSendBulkMessages = true;
     // This need to be done after all old contents are cleared!
     await renderAllContents(treeItemsMap);
   }
@@ -817,7 +822,14 @@ async function renderContents(tabId, lastActiveTab = null) {
       return;
     const messages = [...mPendingRenderContentsMessages.values()];
     mPendingRenderContentsMessages.clear();
-    browser.runtime.sendMessage(TST_ID, { messages });
+    if (mCanSendBulkMessages) {
+      browser.runtime.sendMessage(TST_ID, { messages });
+    }
+    else {
+      for (const message of messages) {
+        browser.runtime.sendMessage(TST_ID, message);
+      }
+    }
   });
 }
 
