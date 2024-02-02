@@ -7,7 +7,6 @@
 
 import {
   configs,
-  nextFrame,
 } from '/common/common.js';
 
 const TST_ID = 'treestyletab@piro.sakura.ne.jp';
@@ -817,7 +816,7 @@ async function renderContents(tabId, lastActiveTab = null) {
 
   const startAt = `${Date.now()}-${parseInt(Math.random() * 65000)}`;
   renderContents.lastStartedAt = startAt;
-  nextFrame().then(() => {
+  window.requestAnimationFrame(() => {
     if (renderContents.lastStartedAt != startAt)
       return;
     const messages = [...mPendingRenderContentsMessages.values()];
