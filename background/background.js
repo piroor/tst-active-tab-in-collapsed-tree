@@ -320,6 +320,7 @@ async function registerToTST() {
           'tree-collapsed-state-changed'
         ],
         allowBulkMessaging: true,
+        lightTree: true,
         style: getStyle(),
       }),
       browser.runtime.sendMessage(TST_ID, {
@@ -478,10 +479,18 @@ function onMessageExternal(message, sender) {
           break;
 
         case 'tree-attached':
-          if (message.tab.active) {
-            log(`Update for newly attached active tab ${message.tab.id}`);
-            reserveToUpdateTab(message.tab.id);
-          }
+          browser.tabs.query({
+            windowId: message.tab.windowId,
+            active:   true,
+          })
+            .then(activeTabs => {
+              if (activeTabs.length <= 0 ||
+                  message.tab.id != activeTabs[0].id)
+                return;
+
+              log(`Update for newly attached active tab ${message.tab.id}`);
+              reserveToUpdateTab(message.tab.id);
+            });
           break;
 
         case 'tree-detached':
