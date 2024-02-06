@@ -293,6 +293,7 @@ const parentForTab = new Map();
 let lastExpandingTree;
 
 let mCanSendBulkMessages = false;
+let mGetTreeType = 'get-tree';
 
 async function registerToTST() {
   try {
@@ -327,9 +328,11 @@ async function registerToTST() {
     ]);
     if (TSTVersion && parseInt(TSTVersion.split('.')[0]) >= 4) {
       mCanSendBulkMessages = true;
+      mGetTreeType = 'get-light-tree';
     }
     else {
       mCanSendBulkMessages = false;
+      mGetTreeType = 'get-tree';
     }
     // This need to be done after all old contents are cleared!
     await renderAllContents(treeItemsMap);
@@ -410,7 +413,7 @@ function onMessageExternal(message, sender) {
 
         case 'try-redirect-focus-from-collaped-tab':
           return browser.runtime.sendMessage(TST_ID, {
-            type: 'get-tree',
+            type: mGetTreeType,
             tabs: message.tab.ancestorTabIds
           }).then(ancestors => {
             return ancestors.some(tab =>
@@ -494,7 +497,7 @@ function onMessageExternal(message, sender) {
           if (lastActiveId &&
               message.collapsed)
             browser.runtime.sendMessage(TST_ID, {
-              type: 'get-tree',
+              type: mGetTreeType,
               tab:  lastActiveId
             }).then(treeItem => {
               if (!message.tab.states.includes('collapsed'))
@@ -532,7 +535,7 @@ browser.tabs.onRemoved.addListener(async tabId => {
     const lastActiveId = activeTabInTree.get(parentId);
     if (lastActiveId) {
       const tab = await browser.runtime.sendMessage(TST_ID, {
-        type: 'get-tree',
+        type: mGetTreeType,
         tab:  parentId
       });
       if (tab) {
@@ -566,12 +569,12 @@ browser.tabs.onRemoved.addListener(async tabId => {
 
 browser.tabs.onActivated.addListener(async activeInfo => {
   const [tab, previousTab] = await browser.runtime.sendMessage(TST_ID, {
-    type: 'get-tree',
+    type: mGetTreeType,
     tabs: [activeInfo.tabId, activeInfo.previousTabId]
   });
 
   const ancestors = await browser.runtime.sendMessage(TST_ID, {
-    type: 'get-tree',
+    type: mGetTreeType,
     tabs: tab.ancestorTabIds
   });
   const wasFocusableLastActiveInTree = ancestors.some(ancestor =>
