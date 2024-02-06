@@ -298,7 +298,7 @@ let mGetTreeType = 'get-tree';
 async function registerToTST() {
   try {
     const [TSTVersion, treeItemsMap] = await Promise.all([
-      browser.runtime.sendMessage(TST_ID, { type: 'vet-version' }),
+      browser.runtime.sendMessage(TST_ID, { type: 'get-version' }),
       initAllTreeItems(),
       browser.runtime.sendMessage(TST_ID, {
         type: 'register-self',
