@@ -1,6 +1,8 @@
 # History
 
  - master/HEAD
+ - 1.2.1 (2024.2.8)
+   * Optimize for future releases of Tree Style Tab.
  - 1.2 (2024.2.2)
    * Optimize with reduced API call.
    * Prepare to support next version TST.
