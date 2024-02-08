@@ -811,7 +811,8 @@ async function renderContents(tabId, lastActiveTab = null) {
   const contents = contentsForTab.get(tabId) || (
     lastActiveTabId &&
     await (async () => {
-      if (!lastActiveTab)
+      if (!lastActiveTab ||
+          !lastActiveTab.url)
         lastActiveTab = await browser.tabs.get(lastActiveTabId);
       if (!lastActiveTab)
         return null;
