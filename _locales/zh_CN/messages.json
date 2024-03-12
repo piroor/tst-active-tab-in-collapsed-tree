@@ -23,6 +23,18 @@
         "message": "为上次活动标签页显示关闭框",
         "hash": "2a5156e730e2774957dfecb88e9f8b7f"
     },
+    "config_theme_caption": {
+        "message": "主题",
+        "hash": "9da24ca7508eb181c632829fd698be9a"
+    },
+    "config_theme_proton": {
+        "message": "质子",
+        "hash": "b9245b97e614a0ba1d56dd6a1464c078"
+    },
+    "config_theme_photon": {
+        "message": "光子",
+        "hash": "311fd0d76e3c685954e10bbc330ac1da"
+    },
     "config_onAction_caption": {
         "message": "对已折叠标签树中的上次活动标签页所进行的动作",
         "hash": "fd06941c754a76cb9b78f8132757617d"
