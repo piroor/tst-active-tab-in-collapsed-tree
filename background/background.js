@@ -10,6 +10,7 @@ import {
   TST_ID,
   WS_ID,
   callTSTAPI,
+  getTSTVersion,
 } from '/common/common.js';
 
 function log(...messages) {
@@ -299,7 +300,7 @@ let mGetTreeType = 'get-tree';
 async function registerToTST() {
   try {
     const [TSTVersion, treeItemsMap] = await Promise.all([
-      callTSTAPI({ type: 'get-version' }),
+      getTSTVersion(),
       initAllTreeItems(),
       callTSTAPI({
         type: 'register-self',
