@@ -7,9 +7,10 @@
 
 import {
   configs,
+  TST_ID,
+  WS_ID,
+  callTSTAPI,
 } from '/common/common.js';
-
-const TST_ID = 'treestyletab@piro.sakura.ne.jp';
 
 function log(...messages) {
   if (configs.debug)
@@ -298,9 +299,9 @@ let mGetTreeType = 'get-tree';
 async function registerToTST() {
   try {
     const [TSTVersion, treeItemsMap] = await Promise.all([
-      browser.runtime.sendMessage(TST_ID, { type: 'get-version' }),
+      callTSTAPI({ type: 'get-version' }),
       initAllTreeItems(),
-      browser.runtime.sendMessage(TST_ID, {
+      callTSTAPI({
         type: 'register-self',
         name: browser.i18n.getMessage('extensionName'),
         //icons: browser.runtime.getManifest().icons,
@@ -323,7 +324,7 @@ async function registerToTST() {
         lightTree: true,
         style: getStyle(),
       }),
-      browser.runtime.sendMessage(TST_ID, {
+      callTSTAPI({
         type: 'clear-all-extra-contents',
       }),
     ]);
@@ -360,6 +361,7 @@ let lastExpandingTreeClearTimer;
 function onMessageExternal(message, sender) {
   switch (sender.id) {
     case TST_ID:
+    case WS_ID:
       if (message && message.messages) {
         for (const oneMessage of message.messages) {
           onMessageExternal(oneMessage, sender);
@@ -413,7 +415,7 @@ function onMessageExternal(message, sender) {
           return Promise.resolve(true);
 
         case 'try-redirect-focus-from-collaped-tab':
-          return browser.runtime.sendMessage(TST_ID, {
+          return callTSTAPI({
             type: mGetTreeType,
             tabs: message.tab.ancestorTabIds
           }).then(ancestors => {
@@ -505,7 +507,7 @@ function onMessageExternal(message, sender) {
           log(`tree collapsed state changed: ${message.tab.id} => ${lastActiveId} [${message.collapsed ? 'collapsed' : 'expaded'}]`);
           if (lastActiveId &&
               message.collapsed)
-            browser.runtime.sendMessage(TST_ID, {
+            callTSTAPI({
               type: mGetTreeType,
               tab:  lastActiveId
             }).then(treeItem => {
@@ -543,7 +545,7 @@ browser.tabs.onRemoved.addListener(async tabId => {
   if (parentId) {
     const lastActiveId = activeTabInTree.get(parentId);
     if (lastActiveId) {
-      const tab = await browser.runtime.sendMessage(TST_ID, {
+      const tab = await callTSTAPI({
         type: mGetTreeType,
         tab:  parentId
       });
@@ -577,12 +579,12 @@ browser.tabs.onRemoved.addListener(async tabId => {
 });
 
 browser.tabs.onActivated.addListener(async activeInfo => {
-  const [tab, previousTab] = await browser.runtime.sendMessage(TST_ID, {
+  const [tab, previousTab] = await callTSTAPI({
     type: mGetTreeType,
     tabs: [activeInfo.tabId, activeInfo.previousTabId]
   });
 
-  const ancestors = await browser.runtime.sendMessage(TST_ID, {
+  const ancestors = await callTSTAPI({
     type: mGetTreeType,
     tabs: tab.ancestorTabIds
   });
@@ -683,7 +685,7 @@ async function getTreeItemsMapForWindow(windowIdOrWindow) {
       return browser.tabs.query({ windowId });
     return windowIdOrWindow.tabs;
   })();
-  const treeItems = await browser.runtime.sendMessage(TST_ID, {
+  const treeItems = await callTSTAPI({
     type: 'get-tree' ,
     tabs: tabs.map(tab => tab.id),
     windowId,
@@ -720,7 +722,7 @@ async function updateTab(
 ) {
   const [nativeTab, tree] = await Promise.all([
     treeItem || browser.tabs.get(tabId).catch(_error => null),
-    treeItem || browser.runtime.sendMessage(TST_ID, {
+    treeItem || callTSTAPI({
       type: 'get-tree',
       tab:  tabId
     }).catch(_error => null)
@@ -845,11 +847,11 @@ async function renderContents(tabId, lastActiveTab = null) {
     const messages = [...mPendingRenderContentsMessages.values()];
     mPendingRenderContentsMessages.clear();
     if (mCanSendBulkMessages) {
-      browser.runtime.sendMessage(TST_ID, { messages });
+      callTSTAPI({ messages });
     }
     else {
       for (const message of messages) {
-        browser.runtime.sendMessage(TST_ID, message);
+        callTSTAPI(message);
       }
     }
   });
@@ -948,7 +950,7 @@ async function renderAllContents(treeItemsMap) {
 async function tryUpdateSuccessorTabFor(treeItem) {
   if (!treeItem)
     return;
-  const ancestors = await browser.runtime.sendMessage(TST_ID, {
+  const ancestors = await callTSTAPI({
     type: 'get-tree',
     tabs: treeItem.ancestorTabIds
   });
@@ -962,12 +964,12 @@ async function tryUpdateSuccessorTabFor(treeItem) {
 }
 
 async function expandTreeFor(tabId) {
-  const treeItem = await browser.runtime.sendMessage(TST_ID, {
+  const treeItem = await callTSTAPI({
     type: 'get-tree',
     tab:  tabId
   });
   for (const ancestorId of treeItem.ancestorTabIds) {
-    browser.runtime.sendMessage(TST_ID, {
+    callTSTAPI({
       type: 'expand-tree',
       tab:  ancestorId
     });
