@@ -1,6 +1,9 @@
 # 更新履歴
 
  - master/HEAD
+ - 1.2.3 (2024.3.26)
+   * Waterfox G6.0.10以降に含まれる「タブサイドバー」に対応
+   * zh-CNロケール更新（by [NightSharp](https://github.com/NightSharp), thanks!）
  - 1.2.2 (2024.2.9)
    * 将来のリリースのTSTで起こるエラーを修正
  - 1.2.1 (2024.2.8)
