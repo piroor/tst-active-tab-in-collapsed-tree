@@ -35,12 +35,12 @@ function getStyle() {
 
   ::part(%EXTRA_CONTENTS_PART% tab-container) {
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     line-height: 1;
     mask-image: linear-gradient(to left, transparent 0, black 2em);
     overflow: hidden;
     position: absolute;
-    right: 0;
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size));
     z-index: 4000;
   }
@@ -58,19 +58,22 @@ function getStyle() {
     bottom: var(--tab-dropshadow-size);
     box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
                 0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
-    left: var(--tab-dropshadow-size);
+    inset-inline-start: var(--tab-dropshadow-size);
+    inset-inline-end: var(--tab-dropshadow-size);
     position: absolute;
-    right: var(--tab-dropshadow-size);
     top: var(--tab-dropshadow-size);
     z-index: 10;
+  }
+  :root.rtl ::part(%EXTRA_CONTENTS_PART% background proton) {
+    background-position: var(--browser-bg-position, right);
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container proton)::before {
     bottom: var(--tab-dropshadow-size);
     content: "";
     display: none;
-    left: var(--tab-dropshadow-size);
+    inset-inline-start: var(--tab-dropshadow-size);
+    inset-inline-end: var(--tab-dropshadow-size);
     position: absolute;
-    right: var(--tab-dropshadow-size);
     top: var(--tab-dropshadow-size);
     z-index: 20;
   }
@@ -115,7 +118,7 @@ function getStyle() {
   ::part(%EXTRA_CONTENTS_PART% tab photon):hover,
   ::part(%EXTRA_CONTENTS_PART% closebox-container photon):hover {
     --tab-surface: var(--tab-surface-hover);
-    border-left-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
+    border-inline-start-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
   }
 
   ::part(%EXTRA_CONTENTS_PART% title) {
@@ -131,7 +134,7 @@ function getStyle() {
   ::part(%EXTRA_CONTENTS_PART% closebox-container active photon) {
     --tab-surface: var(--tab-surface-active);
     --tab-text: var(--tab-text-active);
-    border-left-color: var(--tab-highlighter);
+    border-inline-start-color: var(--tab-highlighter);
     text-shadow: var(--tab-text-shadow);
   }
   :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active photon),
@@ -141,7 +144,7 @@ function getStyle() {
   ::part(%EXTRA_CONTENTS_PART% tab active photon):hover,
   ::part(%EXTRA_CONTENTS_PART% closebox-container active photon):hover {
     --tab-surface: var(--tab-surface-active-hover);
-    border-left-color: var(--tab-highlighter);
+    border-inline-start-color: var(--tab-highlighter);
   }
   :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active photon):hover,
   :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active photon):hover {
@@ -151,7 +154,7 @@ function getStyle() {
   ::part(%EXTRA_CONTENTS_PART% favicon) {
     height: var(--contents-size);
     padding-bottom: calc((var(--contents-size) - var(--favicon-size)) / 2);
-    margin-right: 0.25em;
+    margin-inline-end: 0.25em;
     padding-top: calc((var(--contents-size) - var(--favicon-size)) / 2);
     position: relative;
     max-height: var(--favicon-size);
@@ -171,11 +174,11 @@ function getStyle() {
   ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter) {
     background: var(--multiselected-color);
     bottom: 0;
-    left: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
     opacity: 0;
     pointer-events: none; /* this is required, otherwise "title" of tab label never be shown as a tooltip */
     position: absolute;
-    right: 0;
     top: 0;
     z-index: 50;
   }
@@ -248,7 +251,7 @@ function getStyle() {
     font-size: calc(var(--favicon-size) * 0.9);
     opacity: 0;
     position: absolute;
-    right: 0;
+    inset-inline-end: 0;
     z-index: 5000;
   }
   :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container) {
@@ -269,6 +272,9 @@ function getStyle() {
     pointer-events: none; /* this is required, otherwise closebox-bg never become :hover */
     position: absolute;
     z-index: 6000;
+  }
+  :root.rtl ::part(%EXTRA_CONTENTS_PART% closebox-icon) {
+    mask: url("${base}/resources/close-16.svg") no-repeat right center / 100%;
   }
 
   tab-item:hover ::part(%EXTRA_CONTENTS_PART% closebox-container) {
