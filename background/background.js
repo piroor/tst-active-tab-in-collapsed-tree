@@ -44,6 +44,9 @@ function getStyle() {
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size));
     z-index: 4000;
   }
+  :root.rtl ::part(%EXTRA_CONTENTS_PART% tab-container) {
+    mask-image: linear-gradient(to right, transparent 0, black 2em);
+  }
   ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
     bottom: -1px /* for border-bottom */;
