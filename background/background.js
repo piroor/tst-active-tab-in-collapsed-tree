@@ -312,8 +312,8 @@ async function registerToTST() {
       getTSTVersion(),
       initAllTreeItems(),
       callTSTAPI({
-        type: 'register-self',
-        name: browser.i18n.getMessage('extensionName'),
+        type:           'register-self',
+        name:           browser.i18n.getMessage('extensionName'),
         //icons: browser.runtime.getManifest().icons,
         listeningTypes: [
           'sidebar-show',
@@ -331,8 +331,8 @@ async function registerToTST() {
           'tree-collapsed-state-changed'
         ],
         allowBulkMessaging: true,
-        lightTree: true,
-        style: getStyle(),
+        lightTree:          true,
+        style:              getStyle(),
       }),
       callTSTAPI({
         type: 'clear-all-extra-contents',
@@ -696,7 +696,7 @@ async function getTreeItemsMapForWindow(windowIdOrWindow) {
     return windowIdOrWindow.tabs;
   })();
   const treeItems = await callTSTAPI({
-    type: 'get-tree' ,
+    type: 'get-tree',
     tabs: tabs.map(tab => tab.id),
     windowId,
   });
@@ -745,14 +745,14 @@ async function updateTab(
     lastActiveTab = tab;
 
   log(`<updateTab ${tabId}>`, {
-    lastActiveTab: lastActiveTab && lastActiveTab.id,
+    lastActiveTab:        lastActiveTab && lastActiveTab.id,
     update,
     clear,
     initializing,
-    children: tab.children.length,
+    children:             tab.children.length,
     notLastExpandingTree: tabId != lastExpandingTree,
-    collapsed: tab.states.includes('collapsed'),
-    subtreeCollapsed: tab.states.includes('subtree-collapsed')
+    collapsed:            tab.states.includes('collapsed'),
+    subtreeCollapsed:     tab.states.includes('subtree-collapsed')
   });
 
   // Clear last active descendant when a parent tab
