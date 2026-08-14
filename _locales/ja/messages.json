@@ -10,6 +10,7 @@
   "config_closebox_label":    { "message": "最後にアクティブだったタブにクローズボックスを表示する" },
 
   "config_theme_caption": { "message": "テーマ" },
+  "config_theme_nova":    { "message": "Nova" },
   "config_theme_proton":  { "message": "Proton" },
   "config_theme_photon":  { "message": "Photon" },
 

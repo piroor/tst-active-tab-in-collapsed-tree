@@ -12,7 +12,12 @@ export const configs = new Configs({
   closebox:         true,
   theme:            (() => {
     const matched = navigator.userAgent.match(/Firefox\/(\d+)\.\d+/);
-    return (matched && parseInt(matched[1]) >= 89) ? 'proton' : 'photon';
+    const version = matched ? parseInt(matched[1]) : 0;
+    if (version >= 155)
+      return 'nova';
+    if (version >= 89)
+      return 'proton';
+    return 'photon';
   })(),
 
   onClick:       'focus',

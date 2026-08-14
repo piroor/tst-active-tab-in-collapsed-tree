@@ -51,6 +51,55 @@ function getStyle() {
     top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
     bottom: -1px /* for border-bottom */;
   }
+
+  ::part(%EXTRA_CONTENTS_PART% background nova) {
+    background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
+    background-image: var(--browser-bg-images, none);
+    background-position: var(--browser-bg-position, left);
+    background-size: var(--browser-bg-size, auto);
+    background-repeat: var(--browser-bg-repeat, none);
+    border-radius: var(--contents-size);
+    bottom: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    position: absolute;
+    top: 0;
+    z-index: 10;
+  }
+  :root.rtl ::part(%EXTRA_CONTENTS_PART% background nova) {
+    background-position: var(--browser-bg-position, right);
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container nova) {
+    border-radius: var(--contents-size);
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container nova)::before {
+    bottom: 0;
+    content: "";
+    display: none;
+    inset-inline-start: 0
+    inset-inline-end: 0;
+    position: absolute;
+    top: 0;
+    z-index: 20;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
+  ::part(%EXTRA_CONTENTS_PART% tab-container nova):hover::before {
+    display: inline-block;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container nova):hover::before {
+    background-color: var(--tab-text-regular);
+    border-radius: var(--contents-size);
+    opacity: 0.11;
+  }
+  ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
+  ::part(%EXTRA_CONTENTS_PART% tab-container active nova):hover::before {
+    background-color: var(--tab-surface-active);
+    border-radius: var(--contents-size);
+    box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
+                0 0 0 var(--browser-tab-highlighter, var(--tab-active-border-far));
+    opacity: 1;
+  }
+
   ::part(%EXTRA_CONTENTS_PART% background proton) {
     background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
     background-image: var(--browser-bg-images, none);
@@ -97,10 +146,10 @@ function getStyle() {
                 0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
     opacity: 1;
   }
+
   ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
     border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
   }
-
   :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
     background: var(--browser-background, var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace))));
   }
@@ -237,6 +286,18 @@ function getStyle() {
   /* closebox */
 
   ::part(%EXTRA_CONTENTS_PART% closebox) {
+    display: inline-block;
+    font-size: var(--favicon-size);
+    height: var(--favicon-size);
+    min-height: var(--favicon-size);
+    min-width: var(--favicon-size);
+    max-height: var(--favicon-size);
+    max-width: var(--favicon-size);
+    width: var(--favicon-size);
+  }
+
+  ::part(%EXTRA_CONTENTS_PART% closebox nova) {
+    border-radius: var(--tab-border-radius-size);
     display: inline-block;
     font-size: var(--favicon-size);
     height: var(--favicon-size);
