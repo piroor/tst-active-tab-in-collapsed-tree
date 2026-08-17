@@ -34,22 +34,22 @@ function getStyle() {
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab-container) {
-    bottom: 0;
+    inset-block-start: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size));
+    inset-block-end: 0;
     inset-inline-start: 0;
     inset-inline-end: 0;
     line-height: 1;
     mask-image: linear-gradient(to left, transparent 0, black 2em);
     overflow: hidden;
     position: absolute;
-    top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size));
     z-index: 4000;
   }
   :root.rtl ::part(%EXTRA_CONTENTS_PART% tab-container) {
     mask-image: linear-gradient(to right, transparent 0, black 2em);
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
-    top: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
-    bottom: -1px /* for border-bottom */;
+    inset-block-start: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
+    inset-block-end: -1px /* for border-bottom */;
   }
 
   ::part(%EXTRA_CONTENTS_PART% background nova) {
@@ -59,11 +59,11 @@ function getStyle() {
     background-size: var(--browser-bg-size, auto);
     background-repeat: var(--browser-bg-repeat, none);
     border-radius: var(--contents-size);
-    bottom: 0;
+    inset-block-start: 0;
+    inset-block-end: 0;
     inset-inline-start: 0;
     inset-inline-end: 0;
     position: absolute;
-    top: 0;
     z-index: 10;
   }
   :root.rtl ::part(%EXTRA_CONTENTS_PART% background nova) {
@@ -73,13 +73,13 @@ function getStyle() {
     border-radius: var(--contents-size);
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container nova)::before {
-    bottom: 0;
     content: "";
     display: none;
-    inset-inline-start: 0
+    inset-block-start: 0;
+    inset-block-end: 0;
+    inset-inline-start: 0;
     inset-inline-end: 0;
     position: absolute;
-    top: 0;
     z-index: 20;
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
@@ -87,17 +87,31 @@ function getStyle() {
     display: inline-block;
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container nova):hover::before {
-    background-color: var(--tab-text-regular);
+    background: var(--tab-surface-hover);
     border-radius: var(--contents-size);
-    opacity: 0.11;
+    inset-block-start: 0;
+    inset-block-end: 0;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+  }
+  ::part(%EXTRA_CONTENTS_PART% background active nova),
+  ::part(%EXTRA_CONTENTS_PART% background active nova):hover {
+    background: var(--tab-border-color-accent);
+    border-radius: var(--contents-size);
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
   ::part(%EXTRA_CONTENTS_PART% tab-container active nova):hover::before {
-    background-color: var(--tab-surface-active);
+    --tab-border-width: 1px;
+    --tab-surface: var(--browser-selected-tab-bg, var(--browser-toolbar, var(--toolbar-background-color)));
+    background: var(--tab-surface);
     border-radius: var(--contents-size);
-    box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
-                0 0 0 var(--browser-tab-highlighter, var(--tab-active-border-far));
-    opacity: 1;
+    content: " ";
+    display: block;
+    inset-block-start: var(--tab-border-width);
+    inset-block-end: var(--tab-border-width);
+    inset-inline-start: var(--tab-border-width);
+    inset-inline-end: var(--tab-border-width);
+    position: absolute;
   }
 
   ::part(%EXTRA_CONTENTS_PART% background proton) {
@@ -107,26 +121,26 @@ function getStyle() {
     background-size: var(--browser-bg-size, auto);
     background-repeat: var(--browser-bg-repeat, none);
     border-radius: var(--tab-border-radius-size);
-    bottom: var(--tab-dropshadow-size);
     box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
                 0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
+    inset-block-start: var(--tab-dropshadow-size);
+    inset-block-end: var(--tab-dropshadow-size);
     inset-inline-start: var(--tab-dropshadow-size);
     inset-inline-end: var(--tab-dropshadow-size);
     position: absolute;
-    top: var(--tab-dropshadow-size);
     z-index: 10;
   }
   :root.rtl ::part(%EXTRA_CONTENTS_PART% background proton) {
     background-position: var(--browser-bg-position, right);
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container proton)::before {
-    bottom: var(--tab-dropshadow-size);
     content: "";
     display: none;
+    inset-block-start: var(--tab-dropshadow-size);
+    inset-block-end: var(--tab-dropshadow-size);
     inset-inline-start: var(--tab-dropshadow-size);
     inset-inline-end: var(--tab-dropshadow-size);
     position: absolute;
-    top: var(--tab-dropshadow-size);
     z-index: 20;
   }
   ::part(%EXTRA_CONTENTS_PART% tab-container active proton)::before,
@@ -164,7 +178,8 @@ function getStyle() {
     padding: 0.2em;
     position: relative;
   }
-  :root.animation ::part(%EXTRA_CONTENTS_PART% tab) {
+  :root.animation ::part(%EXTRA_CONTENTS_PART% tab proton),
+  :root.animation ::part(%EXTRA_CONTENTS_PART% tab photon) {
     transition: background 0.25s ease-out;
   }
   ::part(%EXTRA_CONTENTS_PART% tab photon):hover,
@@ -225,13 +240,13 @@ function getStyle() {
 
   ::part(%EXTRA_CONTENTS_PART% multiselected-highlighter) {
     background: var(--multiselected-color);
-    bottom: 0;
+    inset-block-start: 0;
+    inset-block-end: 0;
     inset-inline-start: 0;
     inset-inline-end: 0;
     opacity: 0;
     pointer-events: none; /* this is required, otherwise "title" of tab label never be shown as a tooltip */
     position: absolute;
-    top: 0;
     z-index: 50;
   }
 
@@ -310,7 +325,7 @@ function getStyle() {
 
   ::part(%EXTRA_CONTENTS_PART% closebox-container) {
     background: var(--tab-surface);
-    bottom: calc((var(--%EXTRA_CONTENTS_PART%-tab-size) - var(--favicon-size)) / 2);
+    inset-block-end: calc((var(--%EXTRA_CONTENTS_PART%-tab-size) - var(--favicon-size)) / 2);
     box-shadow: 0 0 0.1em rgba(0, 0, 0, 0.3);
     font-size: calc(var(--favicon-size) * 0.9);
     opacity: 0;
@@ -318,7 +333,8 @@ function getStyle() {
     inset-inline-end: 0;
     z-index: 5000;
   }
-  :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container) {
+  :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container proton),
+  :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container photon) {
     transition: background 0.15s ease-out,
                 box-shadow 0.15s ease-out,
                 opacity 0.15s ease-out;
