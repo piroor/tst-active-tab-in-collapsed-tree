@@ -54,7 +54,7 @@ function getStyle() {
 
   ::part(%EXTRA_CONTENTS_PART% background nova) {
     background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
-    background-image: var(--browser-bg-images, none);
+    background-image: var(--browser-bg-images, none), /* this is a hack to put another BG color on the base BG color */linear-gradient(to right, var(--browser-toolbar-background-color, transparent) 0%, var(--browser-toolbar-background-color, transparent) 100%);
     background-position: var(--browser-bg-position, left);
     background-size: var(--browser-bg-size, auto);
     background-repeat: var(--browser-bg-repeat, none);
