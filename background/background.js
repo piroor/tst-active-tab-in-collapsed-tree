@@ -31,6 +31,7 @@ function getStyle() {
     --throbber-size: var(--contents-size);
     --tab-surface: var(--tab-surface-regular);
     --tab-text: var(--tab-text-regular);
+    --contextual-identity-marker-size: max(2px, calc(var(--contents-size) / 8));
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab-container) {
@@ -122,6 +123,27 @@ function getStyle() {
       outline-color: var(--browser-tab-highlighter, var(--tab-selected-outline-color));
       outline-offset: var(--tab-outline-offset);
     }
+  }
+  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
+    --tab-context-line-block-offset: calc(((var(--tab-size) - var(--favicon-size)) / 2 - var(--contextual-identity-marker-size)) / 2);
+    background-color: var(--contextual-identity-color);
+    border-radius: var(--contextual-identity-marker-size);
+    height: var(--contextual-identity-marker-size);
+    inset-block: var(--tab-border-width) auto;
+    inset-inline: var(--contents-size);
+    margin-inline: 1.2em;
+    position: absolute;
+    width: auto;
+    z-index: 30;
+  }
+  :root:is(.regular:not(.rtl), .inverted.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
+    mask-image: linear-gradient(to left, transparent, black var(--tab-label-mask-size));
+  }
+  :root:is(.inverted:not(.rtl), .regular.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
+    mask-image: linear-gradient(to right, transparent, black var(--tab-label-mask-size));
+  }
+  :root:is(.regular:not(.rtl), .inverted.rtl, .inverted:not(.rtl), .regular.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova active) {
+    mask-image: none;
   }
 
   ::part(%EXTRA_CONTENTS_PART% background proton) {
@@ -976,7 +998,12 @@ function buildContentsForTab(tab) {
   `.trim();
   const highlighter = `
     <span id="highlighter"
-          part="multiselected-highlighter ${highlighted} ${theme}"></span>
+          part="multiselected-highlighter ${highlighted} ${active} ${theme}"></span>
+  `.trim();
+  const contextualIdentityMarker = `
+    <span id="contextual-identity-marker"
+          part="contextual-identity-marker ${active} ${theme}"
+          style="--contextual-identity-color: var(--contextual-identity-color-${tab.cookieStoreId})"></span>
   `.trim();
   const closebox = configs.closebox ? `
     <span id="closebox"
@@ -1024,7 +1051,7 @@ function buildContentsForTab(tab) {
                  draggable="true"
                  data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
                  data-tab-id="${tab.id}"
-                 >${icon}${label}${highlighter}</span></span>${closebox}
+                 >${icon}${label}${highlighter}${contextualIdentityMarker}</span></span>${closebox}
   `.trim();
 }
 
