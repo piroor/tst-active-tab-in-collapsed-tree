@@ -53,6 +53,15 @@ function getStyle() {
     inset-block-end: -1px /* for border-bottom */;
   }
 
+  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+    background-color: var(--contextual-identity-color);
+    position: absolute;
+    z-index: 4010;
+  }
+
+  ::part(%EXTRA_CONTENTS_PART% nova) {
+    --tab-border-width: 1px;
+  }
   ::part(%EXTRA_CONTENTS_PART% background nova) {
     background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
     background-image: /* this is a hack to put another BG color on the base BG color */linear-gradient(to right, var(--browser-toolbar-background-color, transparent) 0%, var(--browser-toolbar-background-color, transparent) 100%), var(--browser-bg-images, none);
@@ -103,7 +112,6 @@ function getStyle() {
     }
     ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
     ::part(%EXTRA_CONTENTS_PART% tab-container active nova):hover::before {
-      --tab-border-width: 1px;
       --tab-surface: var(--browser-selected-tab-bg, var(--browser-toolbar, var(--toolbar-background-color)));
       background: var(--tab-surface);
       border-radius: var(--contents-size);
@@ -125,16 +133,12 @@ function getStyle() {
     }
   }
   ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
-    --tab-context-line-block-offset: calc(((var(--tab-size) - var(--favicon-size)) / 2 - var(--contextual-identity-marker-size)) / 2);
-    background-color: var(--contextual-identity-color);
     border-radius: var(--contextual-identity-marker-size);
     height: var(--contextual-identity-marker-size);
-    inset-block: var(--tab-border-width) auto;
+    inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) + var(--tab-border-width) + 1px) auto;
     inset-inline: var(--contents-size);
     margin-inline: 1.2em;
-    position: absolute;
     width: auto;
-    z-index: 30;
   }
   :root:is(.regular:not(.rtl), .inverted.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
     mask-image: linear-gradient(to left, transparent, black var(--tab-label-mask-size));
@@ -191,6 +195,25 @@ function getStyle() {
     box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
                 0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
     opacity: 1;
+  }
+  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker proton),
+  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker photon) {
+    border-radius: var(--contextual-identity-marker-size);
+    height: auto;
+    inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size)) 0;
+    width: var(--contextual-identity-marker-size);
+  }
+  :root:is(.regular:not(.rtl), .inverted.rtl) {
+    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker proton),
+    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker photon) {
+      inset-inline: auto 0;
+    }
+  }
+  :root:is(.inverted:not(.rtl), .regular.rtl) {
+    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker proton),
+    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker photon) {
+      inset-inline: 0 auto;
+    }
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
@@ -1051,7 +1074,7 @@ function buildContentsForTab(tab) {
                  draggable="true"
                  data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
                  data-tab-id="${tab.id}"
-                 >${icon}${label}${highlighter}${contextualIdentityMarker}</span></span>${closebox}
+                 >${icon}${label}${highlighter}</span></span>${contextualIdentityMarker}${closebox}
   `.trim();
 }
 
