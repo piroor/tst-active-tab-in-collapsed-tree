@@ -54,8 +54,8 @@ function getStyle() {
 
   ::part(%EXTRA_CONTENTS_PART% background nova) {
     background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
-    background-image: var(--browser-bg-images, none), /* this is a hack to put another BG color on the base BG color */linear-gradient(to right, var(--browser-toolbar-background-color, transparent) 0%, var(--browser-toolbar-background-color, transparent) 100%);
-    background-position: var(--browser-bg-position, left);
+    background-image: /* this is a hack to put another BG color on the base BG color */linear-gradient(to right, var(--browser-toolbar-background-color, transparent) 0%, var(--browser-toolbar-background-color, transparent) 100%), var(--browser-bg-images, none);
+    background-position: top left, var(--browser-bg-position, left);
     background-size: var(--browser-bg-size, auto);
     background-repeat: var(--browser-bg-repeat, none);
     border-radius: var(--contents-size);
@@ -94,24 +94,34 @@ function getStyle() {
     inset-inline-start: 0;
     inset-inline-end: 0;
   }
-  ::part(%EXTRA_CONTENTS_PART% background active nova),
-  ::part(%EXTRA_CONTENTS_PART% background active nova):hover {
-    background: var(--tab-border-color-accent);
-    border-radius: var(--contents-size);
+  :root:not(.lwtheme-applied) {
+    ::part(%EXTRA_CONTENTS_PART% background active nova),
+    ::part(%EXTRA_CONTENTS_PART% background active nova):hover {
+      background: var(--tab-border-color-accent);
+      border-radius: var(--contents-size);
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
+    ::part(%EXTRA_CONTENTS_PART% tab-container active nova):hover::before {
+      --tab-border-width: 1px;
+      --tab-surface: var(--browser-selected-tab-bg, var(--browser-toolbar, var(--toolbar-background-color)));
+      background: var(--tab-surface);
+      border-radius: var(--contents-size);
+      content: " ";
+      display: block;
+      inset-block-start: var(--tab-border-width);
+      inset-block-end: var(--tab-border-width);
+      inset-inline-start: var(--tab-border-width);
+      inset-inline-end: var(--tab-border-width);
+      position: absolute;
+    }
   }
-  ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
-  ::part(%EXTRA_CONTENTS_PART% tab-container active nova):hover::before {
-    --tab-border-width: 1px;
-    --tab-surface: var(--browser-selected-tab-bg, var(--browser-toolbar, var(--toolbar-background-color)));
-    background: var(--tab-surface);
-    border-radius: var(--contents-size);
-    content: " ";
-    display: block;
-    inset-block-start: var(--tab-border-width);
-    inset-block-end: var(--tab-border-width);
-    inset-inline-start: var(--tab-border-width);
-    inset-inline-end: var(--tab-border-width);
-    position: absolute;
+  :root.lwtheme-applied {
+    ::part(%EXTRA_CONTENTS_PART% background active nova),
+    ::part(%EXTRA_CONTENTS_PART% background active nova):hover {
+      outline: var(--tab-outline);
+      outline-color: var(--browser-tab-highlighter, var(--tab-selected-outline-color));
+      outline-offset: var(--tab-outline-offset);
+    }
   }
 
   ::part(%EXTRA_CONTENTS_PART% background proton) {
