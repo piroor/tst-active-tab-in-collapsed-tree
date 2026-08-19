@@ -136,7 +136,7 @@ function getStyle() {
     border-radius: var(--contextual-identity-marker-size);
     height: var(--contextual-identity-marker-size);
     inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) + var(--tab-border-width) + 1px) auto;
-    inset-inline: var(--contents-size);
+    inset-inline: 0.5em 0;
     margin-inline: 1.2em;
     width: auto;
   }
