@@ -1,6 +1,9 @@
 # History
 
  - master/HEAD
+ - 1.2.4 (2026.8.26)
+   * Add support for "Nova" theme of TST 4.4.0 and later.
+   * Switch UI direction on RTL environments (using language with right-to-left direction, like Arabian.)
  - 1.2.3 (2024.3.26)
    * Add support for "Tabs Sidebar" of Watefox G6.0.10 and later.
    * Update `zh_CN` locale by [NightSharp](https://github.com/NightSharp). Thanks!

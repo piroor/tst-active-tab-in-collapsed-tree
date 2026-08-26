@@ -1,6 +1,9 @@
 # 更新履歴
 
  - master/HEAD
+ - 1.2.4 (2026.8.26)
+   * TST 4.4.0以降のNovaテーマに対応
+   * RTLの環境（アラビア語など、書字方向が右から左の言語の環境）でUIの方向を切り替えるようにした
  - 1.2.3 (2024.3.26)
    * Waterfox G6.0.10以降に含まれる「タブサイドバー」に対応
    * zh-CNロケール更新（by [NightSharp](https://github.com/NightSharp), thanks!）
