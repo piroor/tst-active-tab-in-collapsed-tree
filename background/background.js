@@ -48,179 +48,11 @@ function getStyle() {
   :root.rtl ::part(%EXTRA_CONTENTS_PART% tab-container) {
     mask-image: linear-gradient(to right, transparent 0, black 2em);
   }
-  ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
-    inset-block-start: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
-    inset-block-end: -1px /* for border-bottom */;
-  }
 
   ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
     background-color: var(--contextual-identity-color);
     position: absolute;
     z-index: 4010;
-  }
-
-  ::part(%EXTRA_CONTENTS_PART% nova) {
-    --tab-border-width: 1px;
-  }
-  ::part(%EXTRA_CONTENTS_PART% background nova) {
-    background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
-    background-image: /* this is a hack to put another BG color on the base BG color */linear-gradient(to right, var(--browser-toolbar-background-color, transparent) 0%, var(--browser-toolbar-background-color, transparent) 100%), var(--browser-bg-images, none);
-    background-position: top left, var(--browser-bg-position, left);
-    background-size: var(--browser-bg-size, auto);
-    background-repeat: var(--browser-bg-repeat, none);
-    border-radius: var(--contents-size);
-    inset-block-start: 0;
-    inset-block-end: 0;
-    inset-inline-start: 0;
-    inset-inline-end: 0;
-    position: absolute;
-    z-index: 10;
-  }
-  :root.rtl ::part(%EXTRA_CONTENTS_PART% background nova) {
-    background-position: var(--browser-bg-position, right);
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container nova) {
-    border-radius: var(--contents-size);
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container nova)::before {
-    content: "";
-    display: none;
-    inset-block-start: 0;
-    inset-block-end: 0;
-    inset-inline-start: 0;
-    inset-inline-end: 0;
-    position: absolute;
-    z-index: 20;
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
-  ::part(%EXTRA_CONTENTS_PART% tab-container nova):hover::before {
-    display: inline-block;
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container nova):hover::before {
-    background: var(--tab-surface-hover);
-    border-radius: var(--contents-size);
-    inset-block-start: 0;
-    inset-block-end: 0;
-    inset-inline-start: 0;
-    inset-inline-end: 0;
-  }
-  :root:not(.lwtheme-applied) {
-    ::part(%EXTRA_CONTENTS_PART% background active nova),
-    ::part(%EXTRA_CONTENTS_PART% background active nova):hover {
-      background: var(--tab-border-color-accent);
-      border-radius: var(--contents-size);
-    }
-    ::part(%EXTRA_CONTENTS_PART% tab-container active nova)::before,
-    ::part(%EXTRA_CONTENTS_PART% tab-container active nova):hover::before {
-      --tab-surface: var(--browser-selected-tab-bg, var(--browser-toolbar, var(--toolbar-background-color)));
-      background: var(--tab-surface);
-      border-radius: var(--contents-size);
-      content: " ";
-      display: block;
-      inset-block-start: var(--tab-border-width);
-      inset-block-end: var(--tab-border-width);
-      inset-inline-start: var(--tab-border-width);
-      inset-inline-end: var(--tab-border-width);
-      position: absolute;
-    }
-  }
-  :root.lwtheme-applied {
-    ::part(%EXTRA_CONTENTS_PART% background active nova),
-    ::part(%EXTRA_CONTENTS_PART% background active nova):hover {
-      outline: var(--tab-outline);
-      outline-color: var(--browser-tab-highlighter, var(--tab-selected-outline-color));
-      outline-offset: var(--tab-outline-offset);
-    }
-  }
-  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
-    border-radius: var(--contextual-identity-marker-size);
-    height: var(--contextual-identity-marker-size);
-    inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) + var(--tab-border-width) + 1px) auto;
-    inset-inline: 0.5em 0;
-    margin-inline: 1.2em;
-    width: auto;
-  }
-  :root:is(.regular:not(.rtl), .inverted.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
-    mask-image: linear-gradient(to left, transparent, black var(--tab-label-mask-size));
-  }
-  :root:is(.inverted:not(.rtl), .regular.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova) {
-    mask-image: linear-gradient(to right, transparent, black var(--tab-label-mask-size));
-  }
-  :root:is(.regular:not(.rtl), .inverted.rtl, .inverted:not(.rtl), .regular.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker nova active) {
-    mask-image: none;
-  }
-
-  ::part(%EXTRA_CONTENTS_PART% background proton) {
-    background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
-    background-image: var(--browser-bg-images, none);
-    background-position: var(--browser-bg-position, left);
-    background-size: var(--browser-bg-size, auto);
-    background-repeat: var(--browser-bg-repeat, none);
-    border-radius: var(--tab-border-radius-size);
-    box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
-                0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
-    inset-block-start: var(--tab-dropshadow-size);
-    inset-block-end: var(--tab-dropshadow-size);
-    inset-inline-start: var(--tab-dropshadow-size);
-    inset-inline-end: var(--tab-dropshadow-size);
-    position: absolute;
-    z-index: 10;
-  }
-  :root.rtl ::part(%EXTRA_CONTENTS_PART% background proton) {
-    background-position: var(--browser-bg-position, right);
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container proton)::before {
-    content: "";
-    display: none;
-    inset-block-start: var(--tab-dropshadow-size);
-    inset-block-end: var(--tab-dropshadow-size);
-    inset-inline-start: var(--tab-dropshadow-size);
-    inset-inline-end: var(--tab-dropshadow-size);
-    position: absolute;
-    z-index: 20;
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container active proton)::before,
-  ::part(%EXTRA_CONTENTS_PART% tab-container proton):hover::before {
-    display: inline-block;
-    border-radius: var(--tab-border-radius-size);
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container proton):hover::before {
-    background-color: var(--tab-text-regular);
-    opacity: 0.11;
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab-container active proton)::before,
-  ::part(%EXTRA_CONTENTS_PART% tab-container active proton):hover::before {
-    background-color: var(--tab-surface-active);
-    background-image: var(--tab-surface-active-bgimage);
-    box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
-                0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
-    opacity: 1;
-  }
-  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker proton),
-  ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker photon) {
-    border-radius: var(--contextual-identity-marker-size);
-    height: auto;
-    inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size)) 0;
-    width: var(--contextual-identity-marker-size);
-  }
-  :root:is(.regular:not(.rtl), .inverted.rtl) {
-    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker proton),
-    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker photon) {
-      inset-inline: auto 0;
-    }
-  }
-  :root:is(.inverted:not(.rtl), .regular.rtl) {
-    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker proton),
-    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker photon) {
-      inset-inline: 0 auto;
-    }
-  }
-
-  ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
-    border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
-  }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab-container photon) {
-    background: var(--browser-background, var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace))));
   }
 
   ::part(%EXTRA_CONTENTS_PART% tab) {
@@ -233,14 +65,227 @@ function getStyle() {
     padding: 0.2em;
     position: relative;
   }
-  :root.animation ::part(%EXTRA_CONTENTS_PART% tab proton),
-  :root.animation ::part(%EXTRA_CONTENTS_PART% tab photon) {
-    transition: background 0.25s ease-out;
+
+  :root[data-style="nova"] {
+    ::part(%EXTRA_CONTENTS_PART%) {
+      --tab-border-width: 1px;
+    }
+    ::part(%EXTRA_CONTENTS_PART% background) {
+      background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
+      background-image: /* this is a hack to put another BG color on the base BG color */linear-gradient(to right, var(--browser-toolbar-background-color, transparent) 0%, var(--browser-toolbar-background-color, transparent) 100%), var(--browser-bg-images, none);
+      background-position: top left, var(--browser-bg-position, left);
+      background-size: var(--browser-bg-size, auto);
+      background-repeat: var(--browser-bg-repeat, none);
+      border-radius: var(--contents-size);
+      inset-block-start: 0;
+      inset-block-end: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      position: absolute;
+      z-index: 10;
+    }
+    &.rtl ::part(%EXTRA_CONTENTS_PART% background) {
+      background-position: var(--browser-bg-position, right);
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container) {
+      border-radius: var(--contents-size);
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container)::before {
+      content: "";
+      display: none;
+      inset-block-start: 0;
+      inset-block-end: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+      position: absolute;
+      z-index: 20;
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container active)::before,
+    ::part(%EXTRA_CONTENTS_PART% tab-container):hover::before {
+      display: inline-block;
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container):hover::before {
+      background: var(--tab-surface-hover);
+      border-radius: var(--contents-size);
+      inset-block-start: 0;
+      inset-block-end: 0;
+      inset-inline-start: 0;
+      inset-inline-end: 0;
+    }
+    &:not(.lwtheme-applied) {
+      ::part(%EXTRA_CONTENTS_PART% background active),
+      ::part(%EXTRA_CONTENTS_PART% background active):hover {
+        background: var(--tab-border-color-accent);
+        border-radius: var(--contents-size);
+      }
+      ::part(%EXTRA_CONTENTS_PART% tab-container active)::before,
+      ::part(%EXTRA_CONTENTS_PART% tab-container active):hover::before {
+        --tab-surface: var(--browser-selected-tab-bg, var(--browser-toolbar, var(--toolbar-background-color)));
+        background: var(--tab-surface);
+        border-radius: var(--contents-size);
+        content: " ";
+        display: block;
+        inset-block-start: var(--tab-border-width);
+        inset-block-end: var(--tab-border-width);
+        inset-inline-start: var(--tab-border-width);
+        inset-inline-end: var(--tab-border-width);
+        position: absolute;
+      }
+    }
+    &.lwtheme-applied {
+      ::part(%EXTRA_CONTENTS_PART% background active),
+      ::part(%EXTRA_CONTENTS_PART% background active):hover {
+        outline: var(--tab-outline);
+        outline-color: var(--browser-tab-highlighter, var(--tab-selected-outline-color));
+        outline-offset: var(--tab-outline-offset);
+      }
+    }
+    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+      border-radius: var(--contextual-identity-marker-size);
+      height: var(--contextual-identity-marker-size);
+      inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) + var(--tab-border-width) + 1px) auto;
+      inset-inline: 0.5em 0;
+      margin-inline: 1.2em;
+      width: auto;
+    }
+    &:is(.regular:not(.rtl), .inverted.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+      mask-image: linear-gradient(to left, transparent, black var(--tab-label-mask-size));
+    }
+    &:is(.inverted:not(.rtl), .regular.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+      mask-image: linear-gradient(to right, transparent, black var(--tab-label-mask-size));
+    }
+    &:is(.regular:not(.rtl), .inverted.rtl, .inverted:not(.rtl), .regular.rtl) ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker active) {
+      mask-image: none;
+    }
+
+    ::part(%EXTRA_CONTENTS_PART% closebox) {
+      border-radius: var(--tab-border-radius-size);
+      display: inline-block;
+      font-size: var(--favicon-size);
+      height: var(--favicon-size);
+      min-height: var(--favicon-size);
+      min-width: var(--favicon-size);
+      max-height: var(--favicon-size);
+      max-width: var(--favicon-size);
+      width: var(--favicon-size);
+    }
   }
-  ::part(%EXTRA_CONTENTS_PART% tab photon):hover,
-  ::part(%EXTRA_CONTENTS_PART% closebox-container photon):hover {
-    --tab-surface: var(--tab-surface-hover);
-    border-inline-start-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
+
+  :root[data-style="proton"] {
+    ::part(%EXTRA_CONTENTS_PART% background) {
+      background-color: var(--browser-background, var(--tabbar-bg, var(--bg-color, ButtonFace)));
+      background-image: var(--browser-bg-images, none);
+      background-position: var(--browser-bg-position, left);
+      background-size: var(--browser-bg-size, auto);
+      background-repeat: var(--browser-bg-repeat, none);
+      border-radius: var(--tab-border-radius-size);
+      box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
+                  0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
+      inset-block-start: var(--tab-dropshadow-size);
+      inset-block-end: var(--tab-dropshadow-size);
+      inset-inline-start: var(--tab-dropshadow-size);
+      inset-inline-end: var(--tab-dropshadow-size);
+      position: absolute;
+      z-index: 10;
+    }
+
+    &.rtl ::part(%EXTRA_CONTENTS_PART% background) {
+      background-position: var(--browser-bg-position, right);
+    }
+
+    ::part(%EXTRA_CONTENTS_PART% tab-container)::before {
+      content: "";
+      display: none;
+      inset-block-start: var(--tab-dropshadow-size);
+      inset-block-end: var(--tab-dropshadow-size);
+      inset-inline-start: var(--tab-dropshadow-size);
+      inset-inline-end: var(--tab-dropshadow-size);
+      position: absolute;
+      z-index: 20;
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container active)::before,
+    ::part(%EXTRA_CONTENTS_PART% tab-container):hover::before {
+      display: inline-block;
+      border-radius: var(--tab-border-radius-size);
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container):hover::before {
+      background-color: var(--tab-text-regular);
+      opacity: 0.11;
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab-container active)::before,
+    ::part(%EXTRA_CONTENTS_PART% tab-container active):hover::before {
+      background-color: var(--tab-surface-active);
+      background-image: var(--tab-surface-active-bgimage);
+      box-shadow: 0 0 0.15em var(--browser-tab-highlighter, var(--tab-active-border-near)),
+                  0 0 var(--tab-dropshadow-size) var(--browser-tab-highlighter, var(--tab-active-border-far));
+      opacity: 1;
+    }
+  }
+
+  :root:not([data-style="nova"]):not([data-style="proton"]) {/* photon */
+	::part(%EXTRA_CONTENTS_PART% tab-container) {
+      inset-block-start: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size) - 1px /* for border-top */);
+      inset-block-end: -1px /* for border-bottom */;
+    }
+
+    ::part(%EXTRA_CONTENTS_PART% tab-container) {
+      border: 1px solid var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
+    }
+    &:not(.active) ::part(%EXTRA_CONTENTS_PART% tab-container) {
+      background: var(--browser-background, var(--tabbar-bg, var(--bg-color-inactive, var(--bg-color, ButtonFace))));
+    }
+
+    ::part(%EXTRA_CONTENTS_PART% tab):hover,
+    ::part(%EXTRA_CONTENTS_PART% closebox-container):hover {
+      --tab-surface: var(--tab-surface-hover);
+      border-inline-start-color: var(--tab-border, var(--badge-bg-color, var(--throbber-shadow-color)));
+    }
+
+    ::part(%EXTRA_CONTENTS_PART% tab active),
+    ::part(%EXTRA_CONTENTS_PART% closebox-container active) {
+      --tab-surface: var(--tab-surface-active);
+      --tab-text: var(--tab-text-active);
+      border-inline-start-color: var(--tab-highlighter);
+      text-shadow: var(--tab-text-shadow);
+    }
+
+    &:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active),
+    &:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active) {
+      --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active));
+    }
+    ::part(%EXTRA_CONTENTS_PART% tab active):hover,
+    ::part(%EXTRA_CONTENTS_PART% closebox-container active):hover {
+      --tab-surface: var(--tab-surface-active-hover);
+      border-inline-start-color: var(--tab-highlighter);
+    }
+    &:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active):hover,
+    &:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active):hover {
+      --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active-hover));
+    }
+  }
+
+  :root:not([data-style="nova"]) { /* photon and proton */
+    ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+      border-radius: var(--contextual-identity-marker-size);
+      height: auto;
+      inset-block: calc(var(--tab-size) - var(--%EXTRA_CONTENTS_PART%-tab-size)) 0;
+      width: var(--contextual-identity-marker-size);
+    }
+
+    &:is(.regular:not(.rtl), .inverted.rtl) {
+      ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+        inset-inline: auto 0;
+      }
+    }
+    &:is(.inverted:not(.rtl), .regular.rtl) {
+      ::part(%EXTRA_CONTENTS_PART% contextual-identity-marker) {
+        inset-inline: 0 auto;
+      }
+    }
+
+    &.animation ::part(%EXTRA_CONTENTS_PART% tab) {
+      transition: background 0.25s ease-out;
+    }
   }
 
   ::part(%EXTRA_CONTENTS_PART% title) {
@@ -250,27 +295,6 @@ function getStyle() {
     text-overflow: ".."; /*ellipsis*/;
     white-space: pre;
     z-index: 100;
-  }
-
-  ::part(%EXTRA_CONTENTS_PART% tab active photon),
-  ::part(%EXTRA_CONTENTS_PART% closebox-container active photon) {
-    --tab-surface: var(--tab-surface-active);
-    --tab-text: var(--tab-text-active);
-    border-inline-start-color: var(--tab-highlighter);
-    text-shadow: var(--tab-text-shadow);
-  }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active photon),
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active photon) {
-    --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active));
-  }
-  ::part(%EXTRA_CONTENTS_PART% tab active photon):hover,
-  ::part(%EXTRA_CONTENTS_PART% closebox-container active photon):hover {
-    --tab-surface: var(--tab-surface-active-hover);
-    border-inline-start-color: var(--tab-highlighter);
-  }
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% tab active photon):hover,
-  :root:not(.active) ::part(%EXTRA_CONTENTS_PART% closebox-container active photon):hover {
-    --tab-surface: var(--tab-surface-active-gradient-inactive, var(--tab-surface-active-hover));
   }
 
   ::part(%EXTRA_CONTENTS_PART% favicon) {
@@ -366,18 +390,6 @@ function getStyle() {
     width: var(--favicon-size);
   }
 
-  ::part(%EXTRA_CONTENTS_PART% closebox nova) {
-    border-radius: var(--tab-border-radius-size);
-    display: inline-block;
-    font-size: var(--favicon-size);
-    height: var(--favicon-size);
-    min-height: var(--favicon-size);
-    min-width: var(--favicon-size);
-    max-height: var(--favicon-size);
-    max-width: var(--favicon-size);
-    width: var(--favicon-size);
-  }
-
   ::part(%EXTRA_CONTENTS_PART% closebox-container) {
     background: var(--tab-surface);
     inset-block-end: calc((var(--%EXTRA_CONTENTS_PART%-tab-size) - var(--favicon-size)) / 2);
@@ -388,8 +400,7 @@ function getStyle() {
     inset-inline-end: 0;
     z-index: 5000;
   }
-  :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container proton),
-  :root.animation ::part(%EXTRA_CONTENTS_PART% closebox-container photon) {
+  :root.animation:not([data-style="nova"]) ::part(%EXTRA_CONTENTS_PART% closebox-container) {
     transition: background 0.15s ease-out,
                 box-shadow 0.15s ease-out,
                 opacity 0.15s ease-out;
@@ -492,7 +503,6 @@ configs.$addObserver(key => {
   switch (key) {
     case 'heightPercentage':
     case 'closebox':
-    case 'theme':
       registerToTST();
       return;
   }
@@ -1003,40 +1013,39 @@ async function renderContents(tabId, lastActiveTab = null) {
 function buildContentsForTab(tab) {
   const active = tab.active ? 'active' : '';
   const highlighted = !tab.active && tab.highlighted ? 'highlighted' : '';
-  const theme = configs.theme;
 
   const icon = [
     `<span id="throbber"
-           part="throbber ${tab.status} ${theme}"
-           ><span part="throbber-image ${active} ${theme}"></span></span>`,
+           part="throbber ${tab.status}"
+           ><span part="throbber-image ${active}"></span></span>`,
     `<img id="favicon"
-          part="favicon ${tab.status} ${theme}"
+          part="favicon ${tab.status}"
           src="${tab.favIconUrl}">`
   ].join('');
   const label = `
     <span id="tab"
-          part="title ${active} ${theme}"
+          part="title ${active}"
           title="${sanitizeForHTML(tab.title)}"
           >${sanitizeForHTML(tab.title)}</span>
   `.trim();
   const highlighter = `
     <span id="highlighter"
-          part="multiselected-highlighter ${highlighted} ${active} ${theme}"></span>
+          part="multiselected-highlighter ${highlighted} ${active}"></span>
   `.trim();
   const contextualIdentityMarker = `
     <span id="contextual-identity-marker"
-          part="contextual-identity-marker ${active} ${theme}"
+          part="contextual-identity-marker ${active}"
           style="--contextual-identity-color: var(--contextual-identity-color-${tab.cookieStoreId})"></span>
   `.trim();
   const closebox = configs.closebox ? `
     <span id="closebox"
-          part="closebox closebox-container ${active} ${theme}"
+          part="closebox closebox-container ${active}"
           title="${sanitizeForHTML(browser.i18n.getMessage('closeboxTooltip'))}"
           ><span id="closebox-bg"
-                 part="closebox closebox-bg ${theme}"
+                 part="closebox closebox-bg"
                  ></span
            ><span id="closebox-icon"
-                  part="closebox closebox-icon ${theme}"></span></span>
+                  part="closebox closebox-icon"></span></span>
   `.trim() : '';
 
   const regularActionDragData = {
@@ -1067,10 +1076,10 @@ function buildContentsForTab(tab) {
   };
   return `
     <span id="tab-container"
-          part="tab-container ${active} ${theme}"
-          ><span part="background ${active} ${theme}"></span
+          part="tab-container ${active}"
+          ><span part="background ${active}"></span
           ><span id="tab"
-                 part="tab ${active} ${theme}"
+                 part="tab ${active}"
                  draggable="true"
                  data-drag-data="${sanitizeForHTML(JSON.stringify(dragData))}"
                  data-tab-id="${tab.id}"
