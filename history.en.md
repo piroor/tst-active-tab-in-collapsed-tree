@@ -2,7 +2,7 @@
 
  - master/HEAD
  - 1.3.0 (2026.8.27)
-   * Stylize tabs matching to the actiev theme of TST 4.4.0 and later automatically, and drop the option to choose theme manually.
+   * Stylize tabs matching to the active theme of TST 4.4.0 and later automatically, and drop the option to choose theme manually.
  - 1.2.4 (2026.8.26)
    * Add support for "Nova" theme of TST 4.4.0 and later.
    * Switch UI direction on RTL environments (using language with right-to-left direction, like Arabian.)
